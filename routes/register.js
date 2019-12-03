@@ -1,10 +1,10 @@
 var Router = require('koa-router');
-var loginModel = require('../models/login');
+var registerModel = require('../models/register');
 var bodyParser = require('koa-bodyparser');
 
 
 var router = Router({
-    prefix: '/login'
+    prefix: '/api/v1.0.0'
 });
 
 var bodyParser = require('koa-bodyparser');
@@ -23,7 +23,7 @@ router.post(`/register`,bodyParser(), async(ctx, next) => {
             birthDate : body.birthDate
         }
 
-        let item = await loginModel.register(ctx, user);
+        let item = await registerModel.register(ctx, user);
         ctx.body = item;
         //TODO: add some image upload
         ctx.response.status = 201;
