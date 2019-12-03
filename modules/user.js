@@ -2,20 +2,24 @@
 var mysql = require('promise-mysql');
 var info = require('../config');
 
-exports.checkDuplicateUser = (username) => {
+exports.isDuplicateUser = async (username) => {
     try{
+        let found = false
         const connection = await mysql.createConnection(info.config);
 
         const sql = `
             SELECT count(ID) FROM user
-            WHERE username = "${username}";
-        `
-        connection.query(sql, (err, result, fields) => {
-            if(err) throw err
-            if(result.count > 0) throw new Error('User already exists')
-        })
+            WHERE username = "${username}";`
+        const result = await connection.query(sql)
+            
+        Object.keys(result).forEach(function(key) {
+            var row = result[key]
+            if (row['count(ID)'] != 0) throw new Error('User already exists')
+                
+        }); 
         connection.end()
         
+        return found
     }catch(err){
         throw err
     }
