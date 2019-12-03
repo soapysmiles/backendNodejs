@@ -1,0 +1,21 @@
+{
+  "name": "backend304",
+  "version": "1.0.0",
+  "description": "Login system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.coventry.ac.uk/304cem-1920SEPJAN/backend304"
+  },
+  "author": "Aaron Machin, Hannia Tahhir",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.11.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "nodemon": "^2.0.1"
+  }
+}
