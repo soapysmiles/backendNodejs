@@ -4,7 +4,7 @@ var info = require('../config');
 
 var Pass = require('../modules/password')
 const Valid = require('../modules/validator')
-
+var user = require('../modules/user')
 
 
 function convertDate(dateString){
@@ -14,10 +14,14 @@ function convertDate(dateString){
 }
 
 
-exports.newUser = async(data) => {
+exports.register = async(ctx, data) => {
     const valid = new Valid()
     const pass = new Pass()
     try{
+        await user.isDuplicateUser(data.username).catch((err) => {
+            throw {message: err.message, status:409};
+        })//Check if user exists
+
         const connection = await mysql.createConnection(info.config);
         const words = [data.username,data.fName,data.lName,data.about]
         for(let i = 0; i < words.length; i++) valid.checkWord(words[i], i)//Check words are valid
@@ -54,10 +58,12 @@ exports.newUser = async(data) => {
             await connection.query(sql);
 
         connection.end()
+        ctx.response.status = 201;
         return {message:"created successfully"};
-    }catch(err){
-        console.log(err);
-        ctx.throw(500, 'An Error has occured');
+    }catch (error) {
+        if(error.status === undefined)
+            error.status = 500;
+        throw error;
     }
 }
 
