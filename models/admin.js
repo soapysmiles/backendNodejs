@@ -83,7 +83,7 @@ exports.createTables = async(id) => {
         `]
         for(let i = 0; i < sql.length; i++)await connection.query(sql[i]);
         
-
+        connection.end()
         return {message:"created successfully"};
 
     }catch (error){
