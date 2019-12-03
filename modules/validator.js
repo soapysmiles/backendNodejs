@@ -57,7 +57,7 @@ exports.checkStringExists = (test, name) => {
 
 /**
  * Function to take a date and convert to mySQL format
- * @param {string} dateString 
+ * @param {string} dateString date to convert in YYYY-MM-DD format
  */
 exports.convertDate = (dateString)=>{
     var strArr = dateString.split('-');//Split array by '-'

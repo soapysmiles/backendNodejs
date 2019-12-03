@@ -80,6 +80,16 @@ describe('checkStringExists', () => {
     })
 })
 
+describe('convertDate()', () => {
+	test('valid date string', () => {
+		expect.assertions(1)
+
+		const result = valid.convertDate('1998-10-01')
+
+		expect(result).toEqual(new Date('1998', '09', '01'))
+	})
+})
+
 describe('checkID()', () => {
 	test('ID valid', () => {
 		expect.assertions(1)
