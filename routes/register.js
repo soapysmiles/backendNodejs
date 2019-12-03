@@ -29,6 +29,7 @@ router.post(`/register`,bodyParser(), async(ctx, next) => {
         ctx.response.status = 201;
         ctx.body = {message:"added successfully"};
     }catch(error){
+        console.log(error)
         ctx.response.status = error.status;
         ctx.body = {message:error.message};
     }
