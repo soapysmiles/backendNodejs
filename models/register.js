@@ -7,27 +7,31 @@ const Valid = require('../modules/validator')
 var user = require('../modules/user')
 
 
-function convertDate(dateString){
-    var parts = dateString.split('-');
-    var result = new Date(parts[0], parts[1] - 1, parts[2]); 
-    return result;
-}
-
-
 exports.register = async(ctx, data) => {
     const valid = new Valid()
     const pass = new Pass()
     try{
+        //Check if user exists
         await user.isDuplicateUser(data.username).catch((err) => {
             throw {message: err.message, status:409};
-        })//Check if user exists
+        })
 
+        //Set DB connection
         const connection = await mysql.createConnection(info.config);
+
+        //Check words match requirements
         const words = [data.username,data.fName,data.lName,data.about]
-        for(let i = 0; i < words.length; i++) valid.checkWord(words[i], i)//Check words are valid
+        for(let i = 0; i < words.length; i++) valid.checkWord(words[i], i)
+
+        //Encrypt password
         const passHash = pass.encrypt(data.password, null);
+
+        //Convert text date to mySQL date
         const birthDate = convertDate(data.birthDate).toISOString().slice(0, 19).replace('T', ' ')
+
+        //Get current date, convert to mySQL format
         const regDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
         const sql = `INSERT INTO user(
             username,
             password,
@@ -53,12 +57,12 @@ exports.register = async(ctx, data) => {
                 "${regDateTime}",
                 1,
                 0
-            )`
+            );`
 
-            await connection.query(sql);
+        await connection.query(sql);
 
         connection.end()
-        ctx.response.status = 201;
+        ctx.response.stats = 201;
         return {message:"created successfully"};
     }catch (error) {
         if(error.status === undefined)
