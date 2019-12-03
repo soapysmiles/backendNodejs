@@ -1,6 +1,9 @@
 
 'use strict'
 
+
+//Edited from 340CT assignment submission https://github.coventry.ac.uk/340CT-1920SEPJAN/machina2
+
 /**
  * Function to check a given string to ensure alphanumical or has symbols: ,."!?\'-
  *

@@ -3,6 +3,8 @@
 
 const valid = require('../modules/validator.js')
 
+//Edited from 340CT assignment submission https://github.coventry.ac.uk/340CT-1920SEPJAN/machina2
+
 describe('checkWord()', () => {
 	test('Error if empty', () => {
 		expect.assertions(1)
