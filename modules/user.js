@@ -4,7 +4,6 @@ var info = require('../config');
 
 exports.isDuplicateUser = async (username) => {
     try{
-        let found = false
         const connection = await mysql.createConnection(info.config);
 
         const sql = `
@@ -19,7 +18,7 @@ exports.isDuplicateUser = async (username) => {
         }); 
         connection.end()
         
-        return found
+        return false
     }catch(err){
         throw err
     }
