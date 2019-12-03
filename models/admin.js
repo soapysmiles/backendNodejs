@@ -9,7 +9,8 @@ exports.createTables = async(id) => {
     try{
         const connection = await mysql.createConnection(info.config);
 
-        let sql = [`CREATE TABLE IF NOT EXISTS user (
+        let sql = [
+        `CREATE TABLE IF NOT EXISTS user (
         ID INT NOT NULL AUTO_INCREMENT,
         username TEXT,
         password TEXT,
@@ -24,7 +25,9 @@ exports.createTables = async(id) => {
         dateRegistered DATETIME,
         active BOOLEAN,
         deleted BOOLEAN,
-        PRIMARY KEY(ID)
+        PRIMARY KEY(ID),
+        CONSTRAINT FK_userCountry
+        FOREIGN KEY (countryID) REFERENCES countries(ID)
         );
         `,`
         CREATE TABLE IF NOT EXISTS loginHistory (
@@ -36,7 +39,9 @@ exports.createTables = async(id) => {
         timeOfLogin DATETIME,
         loggedOutDate DATETIME,
         deviceTypeID INT,
-        PRIMARY KEY(ID)
+        PRIMARY KEY(ID),
+        CONSTRAINT FK_loginHistoryAttemptedUserID
+        FOREIGN KEY (attemptedUserID) REFERENCES user(ID)
         );
         `,`
         CREATE TABLE IF NOT EXISTS passwordReminder (
@@ -46,7 +51,9 @@ exports.createTables = async(id) => {
         securityAnswer1 TEXT,
         securityQuestion2 TEXT,
         securityAnswer2 TEXT,
-        PRIMARY KEY(ID)
+        PRIMARY KEY(ID),
+        CONSTRAINT FK_passwordReminderUserID
+        FOREIGN KEY (userID) REFERENCES user(ID)
         );
         `,`
         CREATE TABLE IF NOT EXISTS passwordChangeHistory (
@@ -54,7 +61,9 @@ exports.createTables = async(id) => {
         userID INT,
         oldPassword TEXT,
         dateChanged DATETIME,
-        PRIMARY KEY(ID)
+        PRIMARY KEY(ID),
+        CONSTRAINT FK_passwordChangeHistoryUserID
+        FOREIGN KEY (userID) REFERENCES user(ID)
         );
         `,`
         CREATE TABLE IF NOT EXISTS signupMethod (
@@ -71,22 +80,6 @@ exports.createTables = async(id) => {
         abbreviation TEXT,
         PRIMARY KEY(ID)
         );
-        `,`
-        ALTER TABLE user
-        ADD CONSTRAINT FK_userCountry
-        FOREIGN KEY (countryID) REFERENCES countries(ID);
-        `,`
-        ALTER TABLE loginHistory
-        ADD CONSTRAINT FK_loginHistoryAttemptedUserID
-        FOREIGN KEY (attemptedUserID) REFERENCES user(ID);
-        `,`
-        ALTER TABLE passwordReminder
-        ADD CONSTRAINT FK_passwordReminderUserID
-        FOREIGN KEY (userID) REFERENCES user(ID);
-        `,`
-        ALTER TABLE passwordChangeHistory
-        ADD CONSTRAINT FK_passwordChangeHistoryUserID
-        FOREIGN KEY (userID) REFERENCES user(ID);
         `]
         for(let i = 0; i < sql.length; i++)await connection.query(sql[i]);
         
