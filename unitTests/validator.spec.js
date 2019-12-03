@@ -51,6 +51,37 @@ describe('checkWord()', () => {
 	})
 })
 
+describe('checkEmail', () => {
+	test('Valid email', () => {
+		expect.assertions(1)
+
+		const result = valid.checkEmail('bk@ksp.kerbnet')
+
+		expect(result).toBe(true)
+	})
+
+	test('Error if URL', () => {
+		expect.assertions(1)
+
+		try{
+			valid.checkEmail('ksp.kerbnet')
+		}catch(e){
+			expect(e).toEqual(Error('Must supply email'))
+		}
+	})
+
+	test('Error if invalid email', () => {
+		expect.assertions(1)
+
+		try{
+			valid.checkEmail('thisisnotanemail')
+		}catch(e){
+			expect(e).toEqual(Error('Must supply email'))
+		}
+		
+	})
+})
+
 describe('checkStringExists', () => {
     test('Valid string', () => {
         expect.assertions(1)
