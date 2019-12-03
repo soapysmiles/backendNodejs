@@ -8,17 +8,19 @@ var router = Router({
 
 var bodyParser = require('koa-bodyparser');
 
-router.post('/addUser:', async(ctx, next) => {
+router.post(`/addUser`,bodyParser(), async(ctx, next) => {
+    const body = ctx.request.body;
     const user = {
-        username : ctx.params.username,
-        pass :ctx.params.password,
-        fName : ctx.params.firstName,
-        lName : ctx.params.lastName,
-        email :ctx.params.email,
-        about :ctx.params.about || '',
-        countryID : ctx.params.countryID,
-        birthDate : ctx.params.birthDate
+        username : body.username,
+        pass :body.password,
+        fName : body.fName,
+        lName : body.lName,
+        email :body.email,
+        about :body.about || '',
+        countryID : body.countryID,
+        birthDate : body.birthdate
     }
+    console.log(user)
 
     let item = await loginModel.newUser(user);
     ctx.body = item;
