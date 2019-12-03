@@ -9,7 +9,7 @@ exports.createTables = async(id) => {
     try{
         const connection = await mysql.createConnection(info.config);
 
-        let sql = `CREATE TABLE IF NOT EXISTS user (
+        let sql = [`CREATE TABLE IF NOT EXISTS user (
         ID INT NOT NULL AUTO_INCREMENT,
         username TEXT,
         password TEXT,
@@ -25,10 +25,9 @@ exports.createTables = async(id) => {
         active BOOLEAN,
         deleted BOOLEAN,
         PRIMARY KEY(ID)
-        );`;
-        await connection.query(sql);
-        
-        sql = `CREATE TABLE IF NOT EXISTS loginHistory (
+        );
+        `,`
+        CREATE TABLE IF NOT EXISTS loginHistory (
         ID INT NOT NULL AUTO_INCREMENT,
         attemptedUserID INT,
         attemptDate DATETIME,
@@ -38,11 +37,9 @@ exports.createTables = async(id) => {
         loggedOutDate DATETIME,
         deviceTypeID INT,
         PRIMARY KEY(ID)
-        );`;
-        await connection.query(sql);
-        
-        
-        sql = `CREATE TABLE IF NOT EXISTS passwordReminder (
+        );
+        `,`
+        CREATE TABLE IF NOT EXISTS passwordReminder (
         ID INT NOT NULL AUTO_INCREMENT,
         userID INT,
         securityQuestion1 TEXT,
@@ -50,67 +47,49 @@ exports.createTables = async(id) => {
         securityQuestion2 TEXT,
         securityAnswer2 TEXT,
         PRIMARY KEY(ID)
-        );`;
-        await connection.query(sql);
-        
-        
-        sql = `CREATE TABLE IF NOT EXISTS passwordChangeHistory (
+        );
+        `,`
+        CREATE TABLE IF NOT EXISTS passwordChangeHistory (
         ID INT NOT NULL AUTO_INCREMENT,
         userID INT,
         oldPassword TEXT,
         dateChanged DATETIME,
         PRIMARY KEY(ID)
-        );`;
-        await connection.query(sql);
-        
-        
-        sql = `CREATE TABLE IF NOT EXISTS signupMethod (
+        );
+        `,`
+        CREATE TABLE IF NOT EXISTS signupMethod (
         ID INT NOT NULL AUTO_INCREMENT,
         serviceProvider TEXT,
         URL TEXT,
         allowed BOOLEAN,
         PRIMARY KEY(ID)
-        );`;
-        await connection.query(sql);
-        
-        
-        sql = `CREATE TABLE IF NOT EXISTS countries (
+        );
+        `,`
+        CREATE TABLE IF NOT EXISTS countries (
         ID INT NOT NULL AUTO_INCREMENT,
         name TEXT,
-        abbreviation DATETIME,
+        abbreviation TEXT,
         PRIMARY KEY(ID)
-        );`;
-
-        await connection.query(sql);
-        
-        //Foreign keys
-        sql = `ALTER TABLE user
+        );
+        `,`
+        ALTER TABLE user
         ADD CONSTRAINT FK_userCountry
         FOREIGN KEY (countryID) REFERENCES countries(ID);
-        `;
-        
-        await connection.query(sql);
-
-        sql = `ALTER TABLE loginHistory
+        `,`
+        ALTER TABLE loginHistory
         ADD CONSTRAINT FK_loginHistoryAttemptedUserID
         FOREIGN KEY (attemptedUserID) REFERENCES user(ID);
-        `;
-        
-        await connection.query(sql);
-
-        sql = `ALTER TABLE passwordReminder
+        `,`
+        ALTER TABLE passwordReminder
         ADD CONSTRAINT FK_passwordReminderUserID
         FOREIGN KEY (userID) REFERENCES user(ID);
-        `;
-        
-        await connection.query(sql);
-
-        sql = `ALTER TABLE passwordChangeHistory
+        `,`
+        ALTER TABLE passwordChangeHistory
         ADD CONSTRAINT FK_passwordChangeHistoryUserID
         FOREIGN KEY (userID) REFERENCES user(ID);
-        `;
+        `]
+        for(let i = 0; i < sql.length; i++)await connection.query(sql[i]);
         
-        await connection.query(sql);
 
         return {message:"created successfully"};
 
