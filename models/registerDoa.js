@@ -4,13 +4,12 @@ var info = require('../config');
 const fs = require('fs-extra')
 const mime = require('mime-types')
 
-var Pass = require('../modules/password')
+var pass = require('../modules/password')
 const Valid = require('../modules/validator')
 var user = require('../modules/user')
 
 
 exports.register = async(ctx, data, image) => {
-    const pass = new Pass()
     try{
         //Check if user exists
         await user.isDuplicateUser(data.username).catch((err) => {
@@ -80,8 +79,7 @@ exports.register = async(ctx, data, image) => {
             );`
 
         const result = await connection.query(sql);
-
-        await this.addPhoto(image.path, image.type, result.insertId).catch((e) => e)//Catch as image is optional
+        if(image) await this.addPhoto(image.path, image.type, result.insertId).catch((e) => e)//Catch as image is optional
         
 
 
