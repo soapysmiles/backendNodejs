@@ -6,7 +6,7 @@ var opts = {};
 var jwt = require("jwt-simple");
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = cfg.jwt.jwtSecret;
-var User = require('../modules/user')
+var User = require('../models/userDoa')
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
     const user = await User.getOneByID(jwt_payload.ID).catch((e) => {

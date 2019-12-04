@@ -5,7 +5,7 @@ var jwt = require("jwt-simple");
 
 var pass = require('../modules/password')
 const Valid = require('../modules/validator')
-var user = require('../modules/user')
+var user = require('./userDoa')
 
 exports.login = async(data) => {
     try{
