@@ -3,9 +3,11 @@ var admin = require('./routes/admin');
 var login = require('./routes/login');
 var register = require('./routes/register');
 var user = require('./routes/user');
+const { userAgent } = require('koa-useragent');
 
 var app = new Koa();
 
+app.use(userAgent);
 app.use(login.routes());
 app.use(admin.routes());
 app.use(register.routes());
