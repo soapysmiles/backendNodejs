@@ -42,6 +42,23 @@ exports.getPassword = async (username) => {
     }
 }
 
+exports.getJWT = async (ID) => {
+    try{
+        Valid.checkID(ID, 'ID')
+        const connection = await mysql.createConnection(info.config);
+
+        let sql = `SELECT ID, jwt FROM user
+                WHERE ID = ${ID};`;
+        const result = await connection.query(sql);
+        
+        if(result.length === 0) throw new Error('User does not exist')
+        connection.end()
+        return result[0]
+    }catch(err){
+        throw err
+    }
+}
+
 exports.getOne = async (username) => {
     try{
         Valid.checkWord(username, 'username')
@@ -54,7 +71,6 @@ exports.getOne = async (username) => {
                 firstName,
                 lastName,
                 profileImageURL,
-                jwt,
                 email,
                 about,
                 countryID,
@@ -76,10 +92,11 @@ exports.getOne = async (username) => {
 
 
 exports.getOneByID = async (ID) => {
+    
     try{
         Valid.checkID(ID, 'userID')
         const connection = await mysql.createConnection(info.config);
-
+       
         let sql = `
             SELECT 
                 ID,
@@ -87,7 +104,6 @@ exports.getOneByID = async (ID) => {
                 firstName,
                 lastName,
                 profileImageURL,
-                jwt,
                 email,
                 about,
                 countryID,
@@ -96,7 +112,7 @@ exports.getOneByID = async (ID) => {
                 active,
                 deleted
             FROM user
-            WHERE username = "${username}";`;
+            WHERE ID = "${ID}";`;
         const result = await connection.query(sql);
         
         if(result.length === 0) throw new Error('User does not exist')
