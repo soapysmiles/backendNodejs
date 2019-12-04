@@ -1,25 +1,30 @@
 var Router = require('koa-router');
-var User = require('../models/userDoa');
+var userModel = require('../models/userDoa');
 var bodyParser = require('koa-bodyparser');
+
 
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 var router = Router({
     prefix: '/api/v1.0.0'
 });
 
-router.get("/user:ID({1,}",passport.authenticate("jwt", { session: false }), function(ctx, next) {
+const passport = require('koa-passport');
+require("../auth/auth");
+passport.initialize()
+
+
+router.get(`/user/:ID([0-9]{1,})`, passport.authenticate("jwt", { session: false }), async(ctx, next) => {
     try{
         const ID = ctx.params.ID;
 
-        const user = User.getOneByID(ID);
+        const user = await userModel.getOneByID(ID);
         ctx.body = user;
        
-        ctx.response.status = 201;
+        ctx.response.status = 200;
     }catch(error){
-        console.log(error)
-        ctx.response.status = error.status;
+        ctx.response.status = error.status || 400;
         ctx.body = {message:error.message};
     }
 });
 
-var bodyParser = require('koa-bodyparser');
+module.exports = router;
