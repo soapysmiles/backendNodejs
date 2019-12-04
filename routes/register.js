@@ -13,7 +13,7 @@ router.post(`/register`, koaBody, async(ctx, next) => {
     try{
         const body = ctx.request.body
         
-        const {path, type} = ctx.request.files.avatar
+        //Get user data
         const user = {
             username : body.username,
             password :body.password,
@@ -24,15 +24,20 @@ router.post(`/register`, koaBody, async(ctx, next) => {
             countryID : body.countryID,
             birthDate : body.birthDate
         }
-
-        const image = {
-            path : path,
-            type: type
+        //Get image information
+        let image
+        if(ctx.request.files.avatar){//Check user uploaded image
+            const {path, type} = ctx.request.files.avatar
+            image = {
+                path : path,
+                type: type
+            }
         }
 
+        //Register user
         let item = await registerModel.register(ctx, user, image);
+
         ctx.body = item;
-        //TODO: add some image upload
         ctx.response.status = 201;
         
     }catch(error){

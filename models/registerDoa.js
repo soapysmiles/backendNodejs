@@ -79,8 +79,7 @@ exports.register = async(ctx, data, image) => {
             );`
 
         const result = await connection.query(sql);
-
-        await this.addPhoto(image.path, image.type, result.insertId).catch((e) => e)//Catch as image is optional
+        if(image) await this.addPhoto(image.path, image.type, result.insertId).catch((e) => e)//Catch as image is optional
         
 
 
