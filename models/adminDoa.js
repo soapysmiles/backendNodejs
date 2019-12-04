@@ -15,6 +15,7 @@ exports.createTables = async(id) => {
         username TEXT,
         password TEXT,
         passwordSalt TEXT,
+        jwt TEXT,
         firstName TEXT,
         lastName TEXT,
         profileImageURL TEXT,
