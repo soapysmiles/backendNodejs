@@ -1,9 +1,9 @@
 var mysql = require('promise-mysql');
-var bcrypt = require('bcrypt');
 var info = require('../config');
 const fs = require('fs-extra')
 const mime = require('mime-types')
-
+var jwt = require("jwt-simple");
+var cfg = require("../config.js");
 var pass = require('../modules/password')
 const Valid = require('../modules/validator')
 var user = require('../modules/user')
@@ -51,7 +51,7 @@ exports.register = async(ctx, data, image) => {
         //Get current date, convert to mySQL format
         const regDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-        const sql = `INSERT INTO user(
+        let sql = `INSERT INTO user(
             username,
             password,
             passwordSalt,
@@ -79,7 +79,22 @@ exports.register = async(ctx, data, image) => {
             );`
 
         const result = await connection.query(sql);
-        if(image) await this.addPhoto(image.path, image.type, result.insertId).catch((e) => e)//Catch as image is optional
+
+       
+        var payload = {
+            ID: result.insertId,
+        }
+
+        const token = jwt.encode(payload, cfg.jwt.jwtSecret)//Generate JWT token
+
+        sql = `
+        UPDATE user
+        SET jwt = "${token}"
+        WHERE ID = ${payload.ID}`
+
+        await connection.query(sql);
+
+        if(image) await this.addPhoto(image.path, image.type, payload.ID).catch((e) => e)//Catch as image is optional
         
 
 
