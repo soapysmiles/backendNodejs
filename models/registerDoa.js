@@ -2,8 +2,6 @@ var mysql = require('promise-mysql');
 var info = require('../config');
 const fs = require('fs-extra')
 const mime = require('mime-types')
-var jwt = require("jwt-simple");
-var cfg = require("../config.js");
 var pass = require('../modules/password')
 const Valid = require('../modules/validator')
 var user = require('../modules/user')
@@ -79,22 +77,8 @@ exports.register = async(ctx, data, image) => {
             );`
 
         const result = await connection.query(sql);
-
-       
-        var payload = {
-            ID: result.insertId,
-        }
-
-        const token = jwt.encode(payload, cfg.jwt.jwtSecret)//Generate JWT token
-
-        sql = `
-        UPDATE user
-        SET jwt = "${token}"
-        WHERE ID = ${payload.ID}`
-
-        await connection.query(sql);
-
-        if(image) await this.addPhoto(image.path, image.type, payload.ID).catch((e) => e)//Catch as image is optional
+        
+        if(image) await this.addPhoto(image.path, image.type, result.ID).catch((e) => e)//Catch as image is optional
         
 
 
