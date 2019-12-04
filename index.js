@@ -9,7 +9,7 @@ var app = new Koa();
 app.use(login.routes());
 app.use(admin.routes());
 app.use(register.routes());
-app.user(user.routes());
+app.use(user.routes());
 
 var port = process.env.PORT || 3000;
 
