@@ -25,13 +25,45 @@ exports.isDuplicateUser = async (username) => {
     }
 }
 
+exports.getPassword = async (username) => {
+    try{
+        Valid.checkWord(username, 'username')
+        const connection = await mysql.createConnection(info.config);
+
+        let sql = `SELECT password, passwordSalt FROM user
+                WHERE username = "${username}";`;
+        const result = await connection.query(sql);
+        
+        if(result.length === 0) throw new Error('User does not exist')
+        connection.end()
+        return result[0]
+    }catch(err){
+        throw err
+    }
+}
+
 exports.getOne = async (username) => {
     try{
         Valid.checkWord(username, 'username')
         const connection = await mysql.createConnection(info.config);
 
-        let sql = `SELECT * FROM user
-                WHERE username = "${username}";`;
+        let sql = `
+            SELECT 
+                ID,
+                username,
+                firstName,
+                lastName,
+                profileImageURL,
+                jwt,
+                email,
+                about,
+                countryID,
+                birthDate,
+                dateRegistered,
+                active,
+                deleted
+            FROM user
+            WHERE username = "${username}";`;
         const result = await connection.query(sql);
         
         if(result.length === 0) throw new Error('User does not exist')
@@ -48,8 +80,23 @@ exports.getOneByID = async (ID) => {
         Valid.checkID(ID, 'userID')
         const connection = await mysql.createConnection(info.config);
 
-        let sql = `SELECT * FROM user
-                WHERE ID = "${ID}";`;
+        let sql = `
+            SELECT 
+                ID,
+                username,
+                firstName,
+                lastName,
+                profileImageURL,
+                jwt,
+                email,
+                about,
+                countryID,
+                birthDate,
+                dateRegistered,
+                active,
+                deleted
+            FROM user
+            WHERE username = "${username}";`;
         const result = await connection.query(sql);
         
         if(result.length === 0) throw new Error('User does not exist')

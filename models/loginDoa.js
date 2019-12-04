@@ -15,11 +15,13 @@ exports.login = async(data) => {
         Valid.checkWord(data.username, 'username')
         Valid.checkStringExists(data.password, 'password')
 
-        const result = await user.getOne(data.username)
+        const passData = await user.getPassword(data.username)
 
-        const salt = result.passwordSalt;
-        const hash = result.password;
+        const salt = passData.passwordSalt;
+        const hash = passData.password;
         const valid = pass.comparePassword(data.password, salt, hash);
+
+        const result = await user.getOne(data.username)
 
         var token;
         if(valid){
