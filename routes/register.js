@@ -1,5 +1,5 @@
 var Router = require('koa-router');
-var registerModel = require('../models/register');
+var registerModel = require('../models/registerDoa');
 var bodyParser = require('koa-bodyparser');
 const multer = require('@koa/multer');
 
