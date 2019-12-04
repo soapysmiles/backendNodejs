@@ -1,13 +1,15 @@
 var mysql = require('promise-mysql');
 var bcrypt = require('bcrypt');
 var info = require('../config');
+const fs = require('fs-extra')
+const mime = require('mime-types')
 
 var Pass = require('../modules/password')
 const Valid = require('../modules/validator')
 var user = require('../modules/user')
 
 
-exports.register = async(ctx, data) => {
+exports.register = async(ctx, data, image) => {
     const pass = new Pass()
     try{
         //Check if user exists
@@ -77,7 +79,11 @@ exports.register = async(ctx, data) => {
                 0
             );`
 
-        await connection.query(sql);
+        const result = await connection.query(sql);
+
+        await this.addPhoto(image.path, image.type, result.insertId).catch((e) => e)//Catch as image is optional
+        
+
 
         connection.end()
         return {message:"created successfully"};
@@ -88,3 +94,42 @@ exports.register = async(ctx, data) => {
     }
 }
 
+exports.addPhoto = async (path, type, userID) => {
+    try{
+        console.log(path)
+        try{
+            Valid.checkID(userID, 'userID')
+            Valid.checkStringExists(path, 'path')
+            Valid.checkStringExists(type, 'type')
+            if(!type.match(/.(jpg|jpeg|png|gif)$/i)) throw new Error('Not an image')
+        }catch(err){
+            throw {message: err.message, status:400};
+        }
+
+        const connection = await mysql.createConnection(info.config);
+        
+        const extension = mime.extension(type)
+    
+        let sql = `SELECT count(ID) as records FROM user
+            WHERE ID = ${userID}`
+        
+        const result = await connection.query(sql);
+        if(result.records === 0){throw {message: 'User does not exist', status: 400}}    
+        
+        const picPath = `user/${userID}/avatar.${extension}`
+        
+        await fs.copy(path, `public/${picPath}`)
+    
+        sql = `UPDATE user 
+            SET profileImageURL = "${picPath}"
+            WHERE ID = ${userID}`
+        await connection.query(sql)
+    
+        return true
+    }catch (error) {
+        if(error.status === undefined || isNaN(error.status))
+            error.status = 500;
+        throw error;
+    }
+   
+}
