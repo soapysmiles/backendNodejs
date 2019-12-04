@@ -9,9 +9,10 @@ opts.secretOrKey = cfg.jwt.jwtSecret;
 var User = require('../models/userDoa')
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
-    const user = await User.getOneByID(jwt_payload.ID).catch((e) => {
+    const user = await User.getJWT(jwt_payload.ID).catch((e) => {
         done(null, null)
     })
+    if(!user)done(null, null)
     if(jwt.encode(jwt_payload, cfg.jwt.jwtSecret) !== user.jwt) done(null,null)
     done(null, jwt_payload);
   })
