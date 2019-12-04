@@ -31,16 +31,7 @@ router.post(`/login`,koaBody, async(ctx, next) => {
     }
 });
 
-router.post("/user",passport.authenticate("jwt", { session: false }), function(ctx, next) {
-    try{
-        ctx.body = {message: 'gained auth'};
-        ctx.response.status = 201;
-    }catch(error){
-        console.log(error)
-        ctx.response.status = error.status;
-        ctx.body = {message:error.message};
-    }
-});
+
 
 
 module.exports = router;
