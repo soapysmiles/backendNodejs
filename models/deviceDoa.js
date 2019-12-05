@@ -21,6 +21,26 @@ exports.getDeviceID = async(name) => {
     }
 }
 
+exports.getDeviceName = async(ID) => {
+    try{
+        //Set DB connection
+        const connection = await mysql.createConnection(info.config);
+
+        let sql = `
+        SELECT name FROM deviceType
+        WHERE ID = ${ID};
+        `
+
+        let deviceType = await connection.query(sql);
+        name = deviceType[0].name
+        return name;
+    }catch (error) {
+        if(error.status === undefined || isNaN(error.status))
+            error.status = 500;
+        throw error;
+    }
+}
+
 exports.getDeviceFromUserAgent = async(useragent) => {
     try{
         const types = ['isMobile', 'isDesktop', 'isTablet'];
@@ -66,6 +86,26 @@ exports.addBrowser = async(name) => {
         `
         const result = await connection.query(sql);
         return result.insertId;
+    }catch (error) {
+        if(error.status === undefined || isNaN(error.status))
+            error.status = 500;
+        throw error;
+    }
+}
+
+exports.getBrowserName = async(ID) => {
+    try{
+        //Set DB connection
+        const connection = await mysql.createConnection(info.config);
+
+        let sql = `
+        SELECT name FROM browser
+        WHERE ID = ${ID};
+        `
+
+        let browser = await connection.query(sql);
+        name = browser[0].name
+        return name;
     }catch (error) {
         if(error.status === undefined || isNaN(error.status))
             error.status = 500;
