@@ -11,7 +11,8 @@ exports.getDeviceID = async(name) => {
         WHERE name = "${name}";
         `
         let device = await connection.query(sql);
-        (device.length === 0) ? device = await this.addDevice(name) : device = device[0] 
+        //If device doesn't exist, create it
+        (device.length === 0) ? device = await this.addDevice(name) : device = device[0]
         return device;
     }catch (error) {
         if(error.status === undefined || isNaN(error.status))
@@ -22,10 +23,12 @@ exports.getDeviceID = async(name) => {
 
 exports.getDeviceFromUserAgent = async(useragent) => {
     try{
-        const types = ['isMobile', 'isDesktop'];
+        const types = ['isMobile', 'isDesktop', 'isTablet'];
+        //Iterate through types, assert which
         for(let i = 0; i < Object.keys(useragent).length; i++){
             if(useragent[types[i]] == true) return types[i].slice(2,).toLowerCase()
         }
+        
         return {message: 'unknown'}
     }catch (error) {
         if(error.status === undefined || isNaN(error.status))
