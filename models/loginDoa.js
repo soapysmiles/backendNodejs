@@ -95,7 +95,6 @@ exports.addLoginHistory = async(userID, success, ip, deviceType, browser) => {
 
         //Get browser
         const brow = await device.getBrowserID(browser)
-        
         sql = `
         INSERT INTO loginHistory(
             attemptedUserID,
@@ -111,8 +110,8 @@ exports.addLoginHistory = async(userID, success, ip, deviceType, browser) => {
             ${success},
             "${ip}",
             "${loginDate}",
-            ${dev.ID},
-            ${brow.ID}
+            ${dev},
+            ${brow}
         );`
         await connection.query(sql);
         

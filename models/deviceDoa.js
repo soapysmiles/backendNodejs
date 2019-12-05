@@ -12,7 +12,7 @@ exports.getDeviceID = async(name) => {
         `
         let device = await connection.query(sql);
         //If device doesn't exist, create it
-        (device.length === 0) ? device = await this.addDevice(name) : device = device[0]
+        (device.length === 0) ? device = await this.addDevice(name) : device = device[0].ID
         return device;
     }catch (error) {
         if(error.status === undefined || isNaN(error.status))
@@ -47,7 +47,7 @@ exports.addDevice = async(name) => {
         (name) VALUES("${name}");
         `
         const result = await connection.query(sql);
-        return result[0].ID;
+        return result.insertId;
     }catch (error) {
         if(error.status === undefined || isNaN(error.status))
             error.status = 500;
@@ -62,10 +62,10 @@ exports.addBrowser = async(name) => {
 
         let sql = `
         INSERT INTO browser
-        (name) VALUES("${name}");
+        (name) VALUES("${name.toLowerCase()}");
         `
         const result = await connection.query(sql);
-        return result[0].ID;
+        return result.insertId;
     }catch (error) {
         if(error.status === undefined || isNaN(error.status))
             error.status = 500;
@@ -80,12 +80,12 @@ exports.getBrowserID = async(name) => {
 
         let sql = `
         SELECT ID FROM browser
-        WHERE name = "${name}";
+        WHERE name = "${name.toLowerCase()}";
         `
 
         let browser = await connection.query(sql);
         //If browser doesn't exist, create it
-        (browser.length === 0) ? browser = await this.addBrowser(name) : browser = browser[0]
+        (browser.length === 0) ? browser = await this.addBrowser(name) : browser = browser[0].ID
         return browser;
     }catch (error) {
         if(error.status === undefined || isNaN(error.status))
