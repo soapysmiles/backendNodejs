@@ -13,18 +13,27 @@ require("../auth/auth");
 passport.initialize()
 
 
-router.get(`/user/:ID([0-9]{1,})`, passport.authenticate("jwt", { session: false }), async(ctx, next) => {
-    try{
-        const ID = ctx.params.ID;
+router.get(`/user/:ID([0-9]{1,})`, async(ctx, next) => {
+    //Authenticate user entry
+    return passport.authenticate("jwt", { session: false }, async (err, payload) =>{
+        try{
+            if(err) throw {message: err.message}
+            const ID = ctx.params.ID;
+            //if(payload.ID !== ID) throw {message: 'Unauthorised'} //Checks if user is accessing own page
+            
+            //Gets user information
+            const user = await userModel.getOneByID(ID).catch((err) => {
+                if(err) throw {message: err.message}
+            });
 
-        const user = await userModel.getOneByID(ID);
-        ctx.body = user;
-       
-        ctx.response.status = 200;
-    }catch(error){
-        ctx.response.status = error.status || 400;
-        ctx.body = {message:error.message};
-    }
+            //Sets return to user data
+            ctx.body = user;
+            ctx.response.status = 200;//a-o-kay
+        }catch(error){
+            ctx.response.status = error.status || 400;
+            ctx.body = {message:error.message};
+        }
+    })(ctx)
 });
 
 module.exports = router;
