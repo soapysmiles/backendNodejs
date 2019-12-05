@@ -42,7 +42,9 @@ exports.createTables = async(id) => {
         deviceTypeID INT,
         PRIMARY KEY(ID),
         CONSTRAINT FK_loginHistoryAttemptedUserID
-        FOREIGN KEY (attemptedUserID) REFERENCES user(ID)
+        FOREIGN KEY (attemptedUserID) REFERENCES user(ID),
+        CONSTRAINT FK_loginHistoryDeviceTypeID
+        FOREIGN KEY (deviceTypeID) REFERENCES deviceType(ID)
         );
         `,`
         CREATE TABLE IF NOT EXISTS passwordReminder (
@@ -81,14 +83,20 @@ exports.createTables = async(id) => {
         abbreviation TEXT,
         PRIMARY KEY(ID)
         );
-        `]
+        `,`
+        CREATE TABLE IF NOT EXISTS deviceType(
+        ID INT NOT NULL AUTO_INCREMENT,
+        name TEXT,
+        PRIMARY KEY(ID)
+        );`]
         for(let i = 0; i < sql.length; i++)await connection.query(sql[i]);
         
 
         return {message:"created successfully"};
 
     }catch (error){
-        console.log(error);
-        ctx.throw(500, 'An Error has occured');
+        if(error.status === undefined || isNaN(error.status))
+            error.status = 500;
+        throw error;
     }
 }
