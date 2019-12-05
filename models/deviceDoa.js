@@ -54,3 +54,42 @@ exports.addDevice = async(name) => {
         throw error;
     }
 }
+
+exports.addBrowser = async(name) => {
+    try{
+        //Set DB connection
+        const connection = await mysql.createConnection(info.config);
+
+        let sql = `
+        INSERT INTO browser
+        (name) VALUES("${name}");
+        `
+        const result = await connection.query(sql);
+        return result[0].ID;
+    }catch (error) {
+        if(error.status === undefined || isNaN(error.status))
+            error.status = 500;
+        throw error;
+    }
+}
+
+exports.getBrowserID = async(name) => {
+    try{
+        //Set DB connection
+        const connection = await mysql.createConnection(info.config);
+
+        let sql = `
+        SELECT ID FROM browser
+        WHERE name = "${name}";
+        `
+
+        let browser = await connection.query(sql);
+        //If browser doesn't exist, create it
+        (browser.length === 0) ? browser = await this.addBrowser(name) : browser = browser[0]
+        return browser;
+    }catch (error) {
+        if(error.status === undefined || isNaN(error.status))
+            error.status = 500;
+        throw error;
+    }
+}
