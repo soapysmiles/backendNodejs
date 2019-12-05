@@ -26,10 +26,10 @@ exports.getDeviceFromUserAgent = async(useragent) => {
         const types = ['isMobile', 'isDesktop', 'isTablet'];
         //Iterate through types, assert which
         for(let i = 0; i < Object.keys(useragent).length; i++){
-            if(useragent[types[i]] == true) return types[i].slice(2,).toLowerCase()
+            if(useragent[types[i]] === true) return types[i].slice(2,).toLowerCase()
         }
         
-        return {message: 'unknown'}
+        return 'unknown'
     }catch (error) {
         if(error.status === undefined || isNaN(error.status))
             error.status = 500;
