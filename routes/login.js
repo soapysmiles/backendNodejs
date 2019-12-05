@@ -19,11 +19,13 @@ router.post(`/login`,koaBody, async(ctx, next) => {
             password : body.password
         }
         let userAg = ctx.userAgent;
-        
-        const deviceType = await device.getDeviceFromUserAgent(userAg);
+           
+        const deviceType = await device.getDeviceFromUserAgent(userAg['_agent']);
+        const browser = userAg['_agent'].browser;
         const attempt = {
             ip : ctx.request.ip,
-            deviceType :deviceType
+            deviceType :deviceType,
+            browser : browser
         }
         //Login user
         let item = await loginModel.login(user, attempt)

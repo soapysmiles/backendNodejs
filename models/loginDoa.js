@@ -30,7 +30,7 @@ exports.login = async(data, attempt) => {
         //Get user based on username
         const result = await user.getOne(data.username);
         //Add login attempt
-        await this.addLoginHistory(result.ID, valid, attempt.ip, attempt.deviceType);
+        await this.addLoginHistory(result.ID, valid, attempt.ip, attempt.deviceType, attempt.browser);
         
         var token;
         if(valid){
@@ -40,6 +40,7 @@ exports.login = async(data, attempt) => {
 
             token = jwt.encode(payload, cfg.jwt.jwtSecret)//Generate JWT token
         }else{
+            //TODO change error message - (user does exist)
             throw {message: 'User does not exist', status: 400}
         }
         
@@ -68,7 +69,7 @@ exports.login = async(data, attempt) => {
  * @param {string} ip IP address of attempted login
  * @param {string} deviceType type of device
  */
-exports.addLoginHistory = async(userID, success, ip, deviceType) => {
+exports.addLoginHistory = async(userID, success, ip, deviceType, browser) => {
     try{
         //Set DB connection
         const connection = await mysql.createConnection(info.config);
@@ -77,6 +78,7 @@ exports.addLoginHistory = async(userID, success, ip, deviceType) => {
         Valid.checkID(userID, 'userID')
         Valid.checkStringExists(ip, 'IP')
         Valid.checkStringExists(deviceType, 'deviceType')
+        Valid.checkStringExists(browser, 'browser')
 
         //Create date based on time right now
         const attemptDate = (new Date()).toISOString()
@@ -90,7 +92,9 @@ exports.addLoginHistory = async(userID, success, ip, deviceType) => {
 
         //Get deviceID
         const dev =await  device.getDeviceID(deviceType)
-        
+
+        //Get browser
+        const brow = await device.getBrowserID(browser)
         sql = `
         INSERT INTO loginHistory(
             attemptedUserID,
@@ -98,14 +102,16 @@ exports.addLoginHistory = async(userID, success, ip, deviceType) => {
             succeded,
             IP,
             timeOfLogin,
-            deviceTypeID    
+            deviceTypeID,
+            browserID   
         ) VALUES (
             ${userID},
             "${attemptDate}",
             ${success},
             "${ip}",
             "${loginDate}",
-            ${dev.ID}
+            ${dev},
+            ${brow}
         );`
         await connection.query(sql);
         

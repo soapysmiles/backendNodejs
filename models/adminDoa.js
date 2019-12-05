@@ -40,11 +40,14 @@ exports.createTables = async(id) => {
         timeOfLogin DATETIME,
         loggedOutDate DATETIME,
         deviceTypeID INT,
+        browserID INT,
         PRIMARY KEY(ID),
         CONSTRAINT FK_loginHistoryAttemptedUserID
         FOREIGN KEY (attemptedUserID) REFERENCES user(ID),
         CONSTRAINT FK_loginHistoryDeviceTypeID
-        FOREIGN KEY (deviceTypeID) REFERENCES deviceType(ID)
+        FOREIGN KEY (deviceTypeID) REFERENCES deviceType(ID),
+        CONSTRAINT FK_loginHistoryBrowserID
+        FOREIGN KEY (browserID) REFERENCES browser(ID)
         );
         `,`
         CREATE TABLE IF NOT EXISTS passwordReminder (
@@ -85,6 +88,11 @@ exports.createTables = async(id) => {
         );
         `,`
         CREATE TABLE IF NOT EXISTS deviceType(
+        ID INT NOT NULL AUTO_INCREMENT,
+        name TEXT,
+        PRIMARY KEY(ID)
+        );`,`
+        CREATE TABLE IF NOT EXISTS browser(
         ID INT NOT NULL AUTO_INCREMENT,
         name TEXT,
         PRIMARY KEY(ID)
