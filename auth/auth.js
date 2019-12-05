@@ -10,11 +10,11 @@ var User = require('../models/userDoa')
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
     const user = await User.getJWT(jwt_payload.ID).catch((e) => {
-        done({message: 'Unauthorised'}, null)
+      return done({message: 'Unauthorised'}, null)
     })
-    if(!user)done({message: 'Unauthorised'}, null)
-    if(jwt.encode(jwt_payload, cfg.jwt.jwtSecret) !== user.jwt) done({message: 'Unauthorised'},null)
-    done(null, jwt_payload);
+    if(!user) return done({message: 'Unauthorised'}, null)
+    if(jwt.encode(jwt_payload, cfg.jwt.jwtSecret) !== user.jwt) return done({message: 'Unauthorised'},null)
+    return done(null, jwt_payload);
   })
 );
 
