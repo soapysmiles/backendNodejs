@@ -3,31 +3,35 @@ var info = require('../config');
 
 //const Valid = require('../modules/validator')
 
-exports.allLoginHistory = async(userID) => {
+exports.allLoginHistory = async(userID, pageNum, pageSize) => {
     
     try{
-        console.log('Comming here123123')
+        pageNum = (pageNum-1) * pageSize
         const connection = await mysql.createConnection(info.config);
+        console.log("12321")
         let sql = `SELECT * FROM loginHistory
         WHERE attemptedUserID = ${userID}
-        LIMIT 10 OFFSET 10`
+        LIMIT ${pageSize}
+        OFFSET ${pageNum} ` 
         const tobe = await connection.query(sql);
         connection.end()
         return {message:"created successfully", data: tobe}
     }catch (error){
-
+        console.log(error)
         return 'An Error has occured'
     }
 }
-exports.loginHistory = async(userID, ID)=> {
+exports.loginHistory = async(userID)=> {
     try{
         const connection = await mysql.createConnection(info.config);
-        let sql = 'SELECT * FROM loginHistory WHERE attemptedUserID = "${userID}" AND ID = "${ID}" LIMIT 10 OFFSET 10'
+        let sql = `SELECT * FROM loginHistory
+        WHERE attemptedUserID = ${userID} 
+        ORDER BY ID DESC LIMIT 1`
         const tobe = await connection.query(sql);
         connection.end()
         return {message:"created successfully", tobe}
     }catch (error){
-
+        console.log(error)
         return 'An Error has occured'
     }
 }

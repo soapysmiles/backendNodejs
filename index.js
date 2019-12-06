@@ -1,5 +1,4 @@
 var Koa = require('koa');
-
 var admin = require('./routes/admin');
 var loginHis = require('./routes/loginHistory')
 
