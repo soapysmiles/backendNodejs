@@ -40,8 +40,7 @@ exports.login = async(data, attempt) => {
 
             token = jwt.encode(payload, cfg.jwt.jwtSecret)//Generate JWT token
         }else{
-            //TODO change error message - (user does exist)
-            throw {message: 'User does not exist', status: 400}
+            throw {message: 'Username or password incorrect', status: 400}
         }
         
         //Add jwt to user table
