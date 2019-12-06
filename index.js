@@ -5,11 +5,12 @@ var register = require('./routes/register');
 var user = require('./routes/user');
 const { userAgent } = require('koa-useragent');
 const passport = require('koa-passport');
+const cors = require('@koa/cors');
 require("./auth/auth");
 var app = new Koa();
 
 
-
+app.use(cors());
 app.use(userAgent);
 app.use(login.routes());
 app.use(admin.routes());
