@@ -77,11 +77,9 @@ exports.register = async(ctx, data, image) => {
             );`
 
         const result = await connection.query(sql);
+        console.log(result)
+        if(image) await this.addPhoto(image.path, image.type, result.insertId).catch((e) => e)//Catch as image is optional
         
-        if(image) await this.addPhoto(image.path, image.type, result.ID).catch((e) => e)//Catch as image is optional
-        
-
-
         connection.end()
         return {message:"created successfully"};
     }catch (error) {
