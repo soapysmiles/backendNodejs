@@ -13,9 +13,9 @@ exports.allLoginHistory = async(userID, pageNum, pageSize) => {
         WHERE attemptedUserID = ${userID}
         LIMIT ${pageSize}
         OFFSET ${pageNum} ` 
-        const tobe = await connection.query(sql);
+        const val = await connection.query(sql);
         connection.end()
-        return {message:"created successfully", data: tobe}
+        return val
     }catch (error){
         console.log(error)
         return 'An Error has occured'
@@ -27,9 +27,9 @@ exports.loginHistory = async(userID)=> {
         let sql = `SELECT * FROM loginHistory
         WHERE attemptedUserID = ${userID} 
         ORDER BY ID DESC LIMIT 1`
-        const tobe = await connection.query(sql);
+        const val = await connection.query(sql);
         connection.end()
-        return {message:"created successfully", tobe}
+        return val
     }catch (error){
         console.log(error)
         return 'An Error has occured'

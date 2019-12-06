@@ -7,19 +7,18 @@ var router = Router({
 });
 
 router.get('/allHistory/', async(ctx) => {
-   // console.log("yoo")
+   
     const params = ctx.params
     const userID  = params && params.id;
-    //console.log(params)
-    let item = await History.allLoginHistory(6, 1, 3);
+
+    let item = await History.allLoginHistory(userID, 1, 3);
     ctx.body = item;
 });
 //:id([0-9]{1,})
 router.get('/history/', async(ctx) => {
-    console.log("yoo")
     const params = ctx.params
     const userID  = params && params.id;
-    let item = await History.loginHistory(2);
+    let item = await History.loginHistory(userID, 1, 3);
     ctx.body = item;
 });
 module.exports = router;
