@@ -33,13 +33,8 @@ exports.register = async(ctx, data, image) => {
         }
 
         //Check email
-        try{
-            Valid.checkEmail(data.email)
-        }catch(err){
-            throw {message: err.message, status:400};
-        }
-        
-
+        Valid.checkEmail(data.email)
+         
         //Encrypt password
         const passHash = pass.encrypt(data.password, null);
 

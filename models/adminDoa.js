@@ -82,6 +82,8 @@ exports.createTables = async(id) => {
             securityAnswer1 TEXT,
             securityQuestion2 TEXT,
             securityAnswer2 TEXT,
+            code TEXT,
+            codeSalt TEXT,
             PRIMARY KEY(ID),
             CONSTRAINT FK_passwordReminderUserID
                 FOREIGN KEY (userID) REFERENCES user(ID)
@@ -91,6 +93,7 @@ exports.createTables = async(id) => {
             ID INT NOT NULL AUTO_INCREMENT,
             userID INT,
             oldPassword TEXT,
+            oldPasswordSalt TEXT,
             dateChanged DATETIME,
             PRIMARY KEY(ID),
             CONSTRAINT FK_passwordChangeHistoryUserID

@@ -80,11 +80,11 @@ exports.addLoginHistory = async(userID, success, ip, deviceType, browser) => {
         Valid.checkStringExists(browser, 'browser')
 
         //Create date based on time right now
-        const attemptDate = (new Date()).toISOString()
+        const attemptDate = (new Date()).toISOString().slice(0, 19).replace('T', ' ')
 
         //Make login date dependant on success
         let loginDate;
-        (success) ? loginDate = attemptDate : loginDate = null;
+        (success) ? loginDate = attemptDate : loginDate = undefined;
 
         //Set success to 1 or 0
         (success) ? success = 1 : success = 0;
@@ -100,7 +100,7 @@ exports.addLoginHistory = async(userID, success, ip, deviceType, browser) => {
             attemptDate,
             succeded,
             IP,
-            timeOfLogin,
+            ${(success) ? "timeOfLogin," : ""}
             deviceTypeID,
             browserID   
         ) VALUES (
@@ -108,7 +108,7 @@ exports.addLoginHistory = async(userID, success, ip, deviceType, browser) => {
             "${attemptDate}",
             ${success},
             "${ip}",
-            "${loginDate}",
+            ${(success) ? `"${loginDate}",` : ""}
             ${dev},
             ${brow}
         );`
