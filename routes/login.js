@@ -42,10 +42,8 @@ router.post(`/tfalogin`,koaBody, async(ctx, next) => {
     return passport.authenticate("jwt", { session: false }, async (err, payload) => {//Get payload
         try{
             const body = ctx.request.body
-            const ID = body.userID
-            await tfaModel.twoFactorAuth(ID, ctx.request.headers['secret']).catch((e)=>{throw e})
+            const ID = body.userID  
             const token = body.token
-            
             const secret = await tfaModel.authenticateTwoFactorAuth(ID, token).catch((e)=> {throw {message: e.message, status: 401}})
 
             ctx.body = {message:"authenticated", secret: secret};
