@@ -29,6 +29,7 @@ router.post(`/login`,koaBody, async(ctx, next) => {
         //Login user
         let item = await loginModel.login(user, attempt)
         
+        if(item.user.deleted == 1){throw ({message: 'User account is deleted', status: 401})}
         ctx.body = item;
         ctx.response.status = 201;
     }catch(error){
