@@ -1,7 +1,7 @@
 var Router = require('koa-router');
 var bodyParser = require('koa-bodyparser');
 const passport = require('koa-passport');
-const passwordResetModel = require('../models/passwordResetDoa')
+const passwordResetModel = require('../models/passwordResetDao')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 var router = Router({
     prefix: '/api/v1.0.0/passwordreset'
@@ -43,7 +43,7 @@ router.put(`/`, koaBody, async(ctx, next) => {
 });
 
 /**
- * @name get/QuestionsAnswers
+ * @name get/Questions
  * @inner
  * @param {int} ID userID to get questions and answers
  */

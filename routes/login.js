@@ -1,8 +1,8 @@
 var Router = require('koa-router');
-var loginModel = require('../models/loginDoa');
+var loginModel = require('../models/loginDao');
 var bodyParser = require('koa-bodyparser');
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
-const device = require('../models/deviceDoa');
+const device = require('../models/deviceDao');
 const passport = require('koa-passport');
 var tfaModel = require('../models/twoFactorAuthDao')
 

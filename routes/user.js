@@ -1,8 +1,8 @@
 var Router = require('koa-router');
-var userModel = require('../models/userDoa');
+var userModel = require('../models/userDao');
 var bodyParser = require('koa-bodyparser');
 const passport = require('koa-passport');
-const countryModel = require('../models/countryDoa')
+const countryModel = require('../models/countryDao')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 var router = Router({
     prefix: '/api/v1.0.0'

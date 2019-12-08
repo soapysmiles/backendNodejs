@@ -4,7 +4,7 @@ const fs = require('fs-extra')
 const mime = require('mime-types')
 var pass = require('../modules/password')
 const Valid = require('../modules/validator')
-var user = require('./userDoa')
+var user = require('./userDao')
 
 
 exports.register = async(ctx, data, image) => {

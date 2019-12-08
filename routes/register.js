@@ -1,5 +1,5 @@
 var Router = require('koa-router');
-var registerModel = require('../models/registerDoa');
+var registerModel = require('../models/registerDao');
 var bodyParser = require('koa-bodyparser');
 
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})

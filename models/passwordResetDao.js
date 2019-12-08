@@ -3,7 +3,7 @@ var info = require('../config');
 var jwt = require("jwt-simple");
 const Valid = require('../modules/validator')
 const password = require('../modules/password')
-const user = require('../models/userDoa');
+const user = require('./userDao');
 
 /**
  * @name getQuestionsAnswers

@@ -2,10 +2,10 @@ var mysql = require('promise-mysql');
 var info = require('../config');
 var cfg = require("../config.js");
 var jwt = require("jwt-simple");
-const device = require('./deviceDoa');
+const device = require('./deviceDao');
 var pass = require('../modules/password')
 const Valid = require('../modules/validator')
-var user = require('./userDoa')
+var user = require('./userDao')
 var TFA = require('./twoFactorAuthDao')
 
 /**

@@ -1,5 +1,5 @@
 var Router = require('koa-router');
-var adminModel = require('../models/adminDoa');
+var adminModel = require('../models/adminDao');
 var bodyParser = require('koa-bodyparser');
 
 var router = Router({
