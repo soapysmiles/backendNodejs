@@ -22,6 +22,7 @@ router.put(`/`, koaBody, async(ctx, next) => {
         try{
             const body = ctx.request.body;
             const ID = body.userID;
+            await tfaModel.twoFactorAuth(ID, ctx.request.headers['secret']).catch((e)=>{throw e})
             if(payload.ID != ID) throw {message: 'Unauthorised', status: 401} //Checks if user is accessing own page
             const data = {
                 question1: body.question1,
