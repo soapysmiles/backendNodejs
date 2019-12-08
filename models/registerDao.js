@@ -6,7 +6,12 @@ var pass = require('../modules/password')
 const Valid = require('../modules/validator')
 var user = require('./userDao')
 
-
+/**
+ * @name login
+ * @author A.M
+ * @param {object} data The data of the user's creditentials (username, fName, lName, about, email, password, birthDate, countryID)
+ * @param {object} image The data of the avatar (path, type)
+ */
 exports.register = async(ctx, data, image) => {
     try{
         //Check if user exists
@@ -83,37 +88,49 @@ exports.register = async(ctx, data, image) => {
         throw error;
     }
 }
-
+/**
+ * @name addPhoto
+ * @author A.M
+ * @param {string} path the tmp path of image
+ * @param {string} type the mimetype of image
+ * @param {int} userID the user to add photo
+ * @throws if user does not exist
+ * @throws if not an image (jpg, jpeg, png, gif)
+ * 
+ * @inner
+ * @implements fs
+ * @copyTo 'public/"param userID"/avatar'
+ */
 exports.addPhoto = async (path, type, userID) => {
     try{
-        console.log(path)
+        //Validation
         try{
             Valid.checkID(userID, 'userID')
             Valid.checkStringExists(path, 'path')
             Valid.checkStringExists(type, 'type')
-            if(!type.match(/.(jpg|jpeg|png|gif)$/i)) throw new Error('Not an image')
+            if(!type.match(/.(jpg|jpeg|png|gif)$/i)) throw new Error('Not an image')//Validates is image
         }catch(err){
             throw {message: err.message, status:400};
         }
 
         const connection = await mysql.createConnection(info.config);
         
-        const extension = mime.extension(type)
+        const extension = mime.extension(type)//Get extension from type
     
         let sql = `SELECT count(ID) as records FROM user
             WHERE ID = ${userID}`
         
         const result = await connection.query(sql);
-        if(result.records === 0){throw {message: 'User does not exist', status: 400}}    
+        if(result.records === 0){throw {message: 'User does not exist', status: 400}}//Make sure user exists
         
-        const picPath = `user/${userID}/avatar.${extension}`
+        const picPath = `user/${userID}/avatar.${extension}`//Set path
         
-        await fs.copy(path, `public/${picPath}`)
+        await fs.copy(path, `public/${picPath}`)//Copy to public folder
     
         sql = `UPDATE user 
             SET profileImageURL = "${picPath}"
             WHERE ID = ${userID}`
-        await connection.query(sql)
+        await connection.query(sql)//Update user
     
         return true
     }catch (error) {

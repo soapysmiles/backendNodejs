@@ -7,6 +7,7 @@ const user = require('./userDao');
 
 /**
  * @name getQuestionsAnswers
+ * @author A.M
  * @param {int} uID the user ID
  * @throws if no questions found
  */
@@ -29,6 +30,7 @@ this.getQuestionsAnswers = async (uID) => {
 
 /**
  * @name checkAnswers
+ * @author A.M
  * @param {int} uID the user ID
  * @param {Object} data The data object with questions and answers to set
  * @throws if answers are incorrect
@@ -53,6 +55,12 @@ exports.checkAnswers = async (uID,data) => {
     }
 }
 
+/**
+ * @name clearCode - clears code of reset
+ * @author A.M
+ * @param {int} uID the user ID
+ * @returns true if successful
+ */
 this.clearCode = async(uID) => {
     try{
         Valid.checkID(uID, 'userID')
@@ -71,6 +79,12 @@ this.clearCode = async(uID) => {
     }
 }
 
+/**
+ * @name setCode - sets code of reset
+ * @author A.M
+ * @param {int} uID the user ID
+ * @returns {object} codeHash & codeSalt
+ */
 this.setCode = async(uID) => {
     try{
         Valid.checkID(uID, 'userID')
@@ -91,7 +105,12 @@ this.setCode = async(uID) => {
     }
 }
 
-
+/**
+ * @name getCode - gets code of reset
+ * @author A.M
+ * @param {int} uID the user ID
+ * @returns {object} codeHash & codeSalt
+ */
 this.getCode = async(uID) => {
     try{
         Valid.checkID(uID, 'userID')
@@ -108,7 +127,14 @@ this.getCode = async(uID) => {
         throw err
     }
 }
-
+/**
+ * @name passwordReset - gets code of reset
+ * @author A.M
+ * @param {int} uID the user ID
+ * @param {Object} data The data object with new password, codeHash & codeSalt
+ * @throws if code is incorrect
+ * @returns {bool} true if successful
+ */
 exports.passwordReset = async(uID, data) => {
     try{
         Valid.checkID(uID, 'userID')
@@ -123,6 +149,8 @@ exports.passwordReset = async(uID, data) => {
         if(code.code == data.codeHash && code.codeSalt == data.codeSalt){
             await user.updatePassword(uID, data.newPassword).catch((e)=>{throw e})
             await this.clearCode(uID)
+        }else{
+            throw new Error('Code incorrect')
         }
         
         connection.end()
@@ -134,6 +162,7 @@ exports.passwordReset = async(uID, data) => {
 
 /**
  * @name getQuestions
+ * @author A.M
  * @param {int} uID the user ID
  * @throws if no questions found
  */
@@ -158,6 +187,7 @@ exports.getQuestions = async (uID) => {
 /**
  * @name setQuestionsAnswers
  * Sets questions and answers based on user ID
+ * @author A.M
  * @param {int} uID The userID
  * @param {Object} data The data object with questions and answers to set
  */
@@ -187,6 +217,7 @@ exports.setQuestionsAnswers = async (uID, data) => {
 
 /**
  * @name updateQuestions
+ * @author A.M
  * @param qID question ID
  * @param data the data to update with
  */
@@ -216,6 +247,7 @@ this.updateQuestions = async (qID, data) => {
 }
 /**
  * @name insertQuestions
+ * @author A.M
  * @param uID user ID
  * @param data the data to insert with
  */

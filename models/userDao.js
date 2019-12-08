@@ -2,6 +2,14 @@ var pass = require('../modules/password')
 var mysql = require('promise-mysql');
 var info = require('../config');
 const Valid = require('../modules/validator')
+
+/**
+ * @name isDuplicateUser checks for another user with same username
+ * @author A.M
+ * @param {string} username - username
+ * @return {boolean} false if no user
+ * @throws if user already exists
+ */
 exports.isDuplicateUser = async (username) => {
     try{
         Valid.checkWord(username, 'username')
@@ -25,6 +33,13 @@ exports.isDuplicateUser = async (username) => {
     }
 }
 
+/**
+ * @name getPassword gets password salt and hash
+ * @author A.M
+ * @param {string} username - username
+ * @throws if user does not exist
+ * @return {object} password, passwordSalt
+ */
 exports.getPassword = async (username) => {
     try{
         Valid.checkWord(username, 'username')
@@ -42,6 +57,13 @@ exports.getPassword = async (username) => {
     }
 }
 
+/**
+ * @name getPasswordByID gets password salt and hash
+ * @author A.M
+ * @param {INT} uID - userID
+ * @throws if user does not exist
+ * @return {object} password, passwordSalt
+ */
 exports.getPasswordByID = async (uID) => {
     try{
         Valid.checkID(uID, 'userID')
@@ -59,6 +81,13 @@ exports.getPasswordByID = async (uID) => {
     }
 }
 
+/**
+ * @name getJWT gets JWT token
+ * @author A.M
+ * @param {INT} ID - userID
+ * @return {object} JWT data
+ * @throws if user does not exist
+ */
 exports.getJWT = async (ID) => {
     try{
         Valid.checkID(ID, 'ID')
@@ -76,6 +105,13 @@ exports.getJWT = async (ID) => {
     }
 }
 
+/**
+ * @name getOne gets userdata
+ * @author A.M
+ * @param {string} username - username
+ * @throws if user does not exist
+ * @return {object} user data
+ */
 exports.getOne = async (username) => {
     try{
         Valid.checkWord(username, 'username')
@@ -107,7 +143,13 @@ exports.getOne = async (username) => {
     }
 }
 
-
+/**
+ * @name getOneByID gets userdata
+ * @author A.M
+ * @param {INT} ID - user ID
+ * @throws if user does not exist
+ * @return {object} user data
+ */
 exports.getOneByID = async (ID) => {
     
     try{
@@ -140,6 +182,13 @@ exports.getOneByID = async (ID) => {
     }
 }
 
+/**
+ * @name updatePassword updates password
+ * @author A.M
+ * @param {INT} uID - userID
+ * @param {string} newPassword - new password to insert
+ * @return {bool} true if successful
+ */
 exports.updatePassword = async (uID, newPassword) => {
     try{
         Valid.checkWord(uID, 'userID')
@@ -163,12 +212,18 @@ exports.updatePassword = async (uID, newPassword) => {
     }
 }
 
+/**
+ * @name passwordChange_historyLog logs a password change, preserving old password
+ * @author A.M
+ * @param {INT} uID - userID
+ * @return {INT} inserID 
+ */
 this.passwordChange_historyLog = async (uID) => {
     try{
         Valid.checkID(uID, 'userID')
         const connection = await mysql.createConnection(info.config);
 
-        const curPassword = await this.getPasswordByID(uID);
+        const curPassword = await this.getPasswordByID(uID);//Get old password
         //Get current date, convert to mySQL format
         const dateTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
 

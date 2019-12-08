@@ -10,6 +10,15 @@ var router = Router({
     prefix: '/api/v1.0.0'
 });
 
+
+/**
+ * @name post/login
+ * @author A.M
+ * @inner
+ * @param {string} username
+ * @param {string} password
+ * @returns {Object} consisting of user, tfa (whether active or not) & token (JWT)
+ */
 router.post(`/login`,koaBody, async(ctx, next) => {
     try{
         const body = ctx.request.body
@@ -39,6 +48,14 @@ router.post(`/login`,koaBody, async(ctx, next) => {
     }
 });
 
+/**
+ * @name post/tfalogin
+ * @author A.M
+ * @inner
+ * @param {INT} userID
+ * @param {string} token TFA token from user
+ * @returns {Object} consisting of secret 
+ */
 router.post(`/tfalogin`,koaBody, async(ctx, next) => {
     return passport.authenticate("jwt", { session: false }, async (err, payload) => {//Get payload
         try{

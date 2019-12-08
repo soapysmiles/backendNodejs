@@ -10,6 +10,7 @@ var router = Router({
 
 /**
  * @name put/QuestionsAnswers
+ * @author A.M
  * @inner
  * @param {int} ID of user
  * @param {string} question1
@@ -22,7 +23,7 @@ router.put(`/`, koaBody, async(ctx, next) => {
         try{
             const body = ctx.request.body;
             const ID = body.userID;
-            await tfaModel.twoFactorAuth(ID, ctx.request.headers['secret']).catch((e)=>{throw e})
+            await tfaModel.twoFactorAuth(ID, ctx.request.headers['secret']).catch((e)=>{throw e})//Check if user authenticated tfa way
             if(payload.ID != ID) throw {message: 'Unauthorised', status: 401} //Checks if user is accessing own page
             const data = {
                 question1: body.question1,
@@ -44,6 +45,7 @@ router.put(`/`, koaBody, async(ctx, next) => {
 
 /**
  * @name get/Questions
+ * @author A.M
  * @inner
  * @param {int} ID userID to get questions and answers
  */
@@ -63,6 +65,7 @@ router.get(`/:ID([0-9]{1,})`, async(ctx, next) => {
 
 /**
  * @name post/Answers
+ * @author A.M
  * @inner
  * @param {int} ID userID to get questions and answers
  * @param {string} answer1
@@ -96,6 +99,7 @@ router.post(`/`, koaBody, async(ctx, next) => {
 
 /**
  * @name post/Reset New password
+ * @author A.M
  * @inner
  * @param {int} ID userID to get questions and answers
  * @param {string} answer1

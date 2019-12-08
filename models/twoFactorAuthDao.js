@@ -4,6 +4,15 @@ var mysql = require('promise-mysql');
 var info = require('../config');
 var valid = require('../modules/validator')
 
+/**
+ * @name authenticateTwoFactorAuth checks token is correct
+ * @author A.M
+ * @param {INT} uID - user ID
+ * @param {string} token - optional (if(no TFA))
+ * @returns {bool} false - if TFA is not activated
+ * @returns {string} secret - if TFA activated
+ * @throws If not successful
+ */
 exports.authenticateTwoFactorAuth = async (uID, token) => {
     const tfa = await this.getTwoFactor(uID);
     var secret = tfa.secret
@@ -17,6 +26,15 @@ exports.authenticateTwoFactorAuth = async (uID, token) => {
     return secret;
 }
 
+/**
+ * @name twoFactorAuth checks secret is correct
+ * @author A.M
+ * @param {INT} uID - user ID
+ * @param {string} secret - optional (if(no TFA))
+ * @returns {bool} true - if TFA is not activated
+ * @returns {bool} true - if TFA authenticated (secret correct)
+ * @throws If not authenticated (secret incorrect)
+ */
 exports.twoFactorAuth = async (uID, secret) => {
     try{
         const twoFactor = await this.getTwoFactor(uID)
@@ -36,7 +54,11 @@ exports.twoFactorAuth = async (uID, secret) => {
     }
 }
 
-
+/**
+ * @name activateTwoFactorAuth activates TFA
+ * @author A.M
+ * @param {INT} uID - user ID
+ */
 exports.activateTwoFactorAuth = async (uID) => {
     try{
         valid.checkID(uID, 'userID')
@@ -61,7 +83,11 @@ exports.activateTwoFactorAuth = async (uID) => {
         throw error;
     }
 }
-
+/**
+ * @name getTwoFactor gets TFA
+ * @author A.M
+ * @param {INT} uID - user ID
+ */
 exports.getTwoFactor = async (uID) =>{
     try{
         valid.checkID(uID, 'userID')
@@ -83,7 +109,13 @@ exports.getTwoFactor = async (uID) =>{
         throw error;
     }
 }
-
+/**
+ * @name updateTwoFactor updates TFA
+ * @author A.M
+ * @param {INT} uID - user ID
+ * @param {string} secret - secret of TFA
+ * @param {string} qr - qrcode image of secret
+ */
 this.updateTwoFactor = async (uID, secret, qr) =>{
     try{
         valid.checkID(uID, 'userID')
@@ -107,7 +139,13 @@ this.updateTwoFactor = async (uID, secret, qr) =>{
     }
     
 }
-
+/**
+ * @name addTwoFactor adds TFA
+ * @author A.M
+ * @param {INT} uID - user ID
+ * @param {string} secret - secret of TFA
+ * @param {string} qr - qrcode image of secret
+ */
 this.addTwoFactor = async (uID, secret, qr) => {
     valid.checkID(uID, 'userID')
     //Set DB connection
@@ -132,6 +170,12 @@ this.addTwoFactor = async (uID, secret, qr) => {
     return true
 }
 
+/**
+ * @name generateQR generates QRcode based on secret TFA
+ * @author A.M
+ * @param {string} secret - secret of TFA
+ * @returns {string} qr - qrcode image of secret
+ */
 this.generateQR = async (secret) => {
     try{
         let qr =await QRCode.toDataURL(secret.otpauth_url)
@@ -141,6 +185,11 @@ this.generateQR = async (secret) => {
     }
 }
 
+/**
+ * @name deactivateTwoFactorAuth deactivates TFA
+ * @author A.M
+ * @param {INT} uID - user ID
+ */
 exports.deactivateTwoFactorAuth = async (uID) => {
     try{
         valid.checkID(uID, 'userID')

@@ -6,7 +6,13 @@ var router = Router({
     prefix: '/api/v1.0.0/tfa'
 });
 
-
+/**
+ * @name post/activate activates TFA for user
+ * @author A.M
+ * @inner
+ * @param {INT} userID
+ * @returns {Object} consisting of secret and qrcode
+ */
 router.post(`/activate`, koaBody, async(ctx, next) => {
     return passport.authenticate("jwt", { session: false }, async (err, payload) => {//Get payload
         try{
@@ -29,6 +35,12 @@ router.post(`/activate`, koaBody, async(ctx, next) => {
     })(ctx)
 });
 
+/**
+ * @name post/activate deactivates TFA for user
+ * @author A.M
+ * @inner
+ * @param {INT} userID
+ */
 router.post(`/deactivate`, koaBody, async(ctx, next) => {
     return passport.authenticate("jwt", { session: false }, async (err, payload) => {//Get payload
         try{
@@ -50,6 +62,13 @@ router.post(`/deactivate`, koaBody, async(ctx, next) => {
     })(ctx)
 });
 
+/**
+ * @name get/:userID gets secret and qr code for user
+ * @author A.M
+ * @inner
+ * @param {INT} userID
+ * @returns {Object} consisting of secret and qrcode
+ */
 router.get(`/:id([0-9]{1,})`, koaBody, async(ctx, next) => {
     return passport.authenticate("jwt", { session: false }, async (err, payload) => {//Get payload
         try{

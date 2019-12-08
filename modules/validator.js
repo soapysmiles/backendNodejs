@@ -8,6 +8,7 @@
  * Function to check a given string to ensure alphanumical or has symbols: ,."!?\'-
  *
  * @name checkWord
+ * @author A.M
  * @param test The string to test
  * @throws If string does not match requirements
  * @returns true
@@ -26,6 +27,7 @@ exports.checkWord = (string, name) => {
  * Function to check an ID
  *
  * @name checkID
+ * @author A.M
  * @param ID the ID to check
  * @param name the name to use in error messages
  * @throws if ID is undefined, null or not a number
@@ -42,6 +44,7 @@ exports.checkID = (ID, name) => {
  * Function to check if string exists
  *
  * @name checkStringExists
+ * @author A.M
  * @param test the test to check
  * @param name the name to use in error messages
  * @throws if test is null, undefined or length is 0
@@ -60,6 +63,7 @@ exports.checkStringExists = (test, name) => {
 
 /**
  * Function to take a date and convert to mySQL format
+ * @author A.M
  * @param {string} dateString date to convert in YYYY-MM-DD format
  */
 exports.convertDate = (dateString)=>{
@@ -68,6 +72,12 @@ exports.convertDate = (dateString)=>{
     return result;
 }
 
+/**
+ * Function to check email based on regex
+ * @author A.M
+ * @param {string} email
+ * @returns {boolean} true if email is correct
+ */
 exports.checkEmail = (email) => {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if(!re.test(String(email).toLowerCase())) throw new Error('Must supply email');
