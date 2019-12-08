@@ -5,6 +5,10 @@ exports.adminConsole = async() => {
     
 }
 
+/**
+ * @name createTables - creates database and tables
+ * @author A.M
+ */
 exports.createTables = async(id) => {
     try{
         const connectionNoDB = await mysql.createConnection({host: info.config.host, user: info.config.user, password: info.config.password})
@@ -42,6 +46,17 @@ exports.createTables = async(id) => {
             PRIMARY KEY(ID),
             CONSTRAINT FK_userCountry
                 FOREIGN KEY (countryID) REFERENCES countries(ID)
+        );
+        `,`
+        CREATE TABLE IF NOT EXISTS twoFactor (
+            ID INT NOT NULL AUTO_INCREMENT,
+            userID INT,
+            secret TEXT,
+            qrcode TEXT,
+            active BOOLEAN,
+            PRIMARY KEY(ID),
+            CONSTRAINT FK_twoFactorUser
+                FOREIGN KEY (userID) REFERENCES user(ID)
         );
         `,`
         CREATE TABLE IF NOT EXISTS deviceType(
@@ -82,6 +97,8 @@ exports.createTables = async(id) => {
             securityAnswer1 TEXT,
             securityQuestion2 TEXT,
             securityAnswer2 TEXT,
+            code TEXT,
+            codeSalt TEXT,
             PRIMARY KEY(ID),
             CONSTRAINT FK_passwordReminderUserID
                 FOREIGN KEY (userID) REFERENCES user(ID)
@@ -91,6 +108,7 @@ exports.createTables = async(id) => {
             ID INT NOT NULL AUTO_INCREMENT,
             userID INT,
             oldPassword TEXT,
+            oldPasswordSalt TEXT,
             dateChanged DATETIME,
             PRIMARY KEY(ID),
             CONSTRAINT FK_passwordChangeHistoryUserID

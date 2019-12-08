@@ -1,16 +1,24 @@
 var Router = require('koa-router');
-var loginModel = require('../models/loginDoa');
+var loginModel = require('../models/loginDao');
 var bodyParser = require('koa-bodyparser');
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
-const device = require('../models/deviceDoa');
+const device = require('../models/deviceDao');
 const passport = require('koa-passport');
-require("../auth/auth");
-passport.initialize()
+var tfaModel = require('../models/twoFactorAuthDao')
 
 var router = Router({
     prefix: '/api/v1.0.0'
 });
 
+
+/**
+ * @name post/login
+ * @author A.M
+ * @inner
+ * @param {string} username
+ * @param {string} password
+ * @returns {Object} consisting of user, tfa (whether active or not) & token (JWT)
+ */
 router.post(`/login`,koaBody, async(ctx, next) => {
     try{
         const body = ctx.request.body
@@ -29,7 +37,8 @@ router.post(`/login`,koaBody, async(ctx, next) => {
         }
         //Login user
         let item = await loginModel.login(user, attempt)
-
+        
+        if(item.user.deleted == 1){throw ({message: 'User account is deleted', status: 401})}
         ctx.body = item;
         ctx.response.status = 201;
     }catch(error){
@@ -38,6 +47,35 @@ router.post(`/login`,koaBody, async(ctx, next) => {
         ctx.body = {message:error.message};
     }
 });
+
+/**
+ * @name post/tfalogin
+ * @author A.M
+ * @inner
+ * @param {INT} userID
+ * @param {string} token TFA token from user
+ * @returns {Object} consisting of secret 
+ */
+router.post(`/tfalogin`,koaBody, async(ctx, next) => {
+    return passport.authenticate("jwt", { session: false }, async (err, payload) => {//Get payload
+        try{
+            const body = ctx.request.body
+            const ID = body.userID  
+            const token = body.token
+            const secret = await tfaModel.authenticateTwoFactorAuth(ID, token).catch((e)=> {throw {message: e.message, status: 401}})
+
+            ctx.body = {message:"authenticated", secret: secret};
+            ctx.response.status = 201;
+        }catch(error){
+            console.log(error)
+            ctx.response.status = error.status;
+            ctx.body = {message:error.message};
+        }
+    
+        
+    })(ctx)
+});
+
 
 
 

@@ -2,13 +2,15 @@ var mysql = require('promise-mysql');
 var info = require('../config');
 var cfg = require("../config.js");
 var jwt = require("jwt-simple");
-const device = require('./deviceDoa');
+const device = require('./deviceDao');
 var pass = require('../modules/password')
 const Valid = require('../modules/validator')
-var user = require('./userDoa')
+var user = require('./userDao')
+var TFA = require('./twoFactorAuthDao')
 
 /**
  * @name login
+ * @author A.M
  * @param {object} data The data of the user's creditentials (username, password)
  * @param {object} attempt The data of the attempt (ip, deviceType)
  */
@@ -40,8 +42,7 @@ exports.login = async(data, attempt) => {
 
             token = jwt.encode(payload, cfg.jwt.jwtSecret)//Generate JWT token
         }else{
-            //TODO change error message - (user does exist)
-            throw {message: 'User does not exist', status: 400}
+            throw {message: 'Username or password incorrect', status: 400}
         }
         
         //Add jwt to user table
@@ -52,8 +53,10 @@ exports.login = async(data, attempt) => {
 
         await connection.query(sql);
         
+        const tfaA = await TFA.getTwoFactor(result.ID).catch((e)=> {e})
+        const tfa = tfaA && tfaA.active
         connection.end()
-        return {message:"Logged in successfully", token: token, user: result};
+        return {message:"Logged in successfully", token: token, user: result, tfa: tfa};
     }catch (error) {
         if(error.status === undefined || isNaN(error.status))
             error.status = 500;
@@ -64,6 +67,7 @@ exports.login = async(data, attempt) => {
 
 /**
  * @name addLoginHistory
+ * @author A.M
  * @param {int} userID ID of attempted user login
  * @param {bool} success Logged in or not
  * @param {string} ip IP address of attempted login
@@ -81,11 +85,11 @@ exports.addLoginHistory = async(userID, success, ip, deviceType, browser) => {
         Valid.checkStringExists(browser, 'browser')
 
         //Create date based on time right now
-        const attemptDate = (new Date()).toISOString()
+        const attemptDate = (new Date()).toISOString().slice(0, 19).replace('T', ' ')
 
         //Make login date dependant on success
         let loginDate;
-        (success) ? loginDate = attemptDate : loginDate = null;
+        (success) ? loginDate = attemptDate : loginDate = undefined;
 
         //Set success to 1 or 0
         (success) ? success = 1 : success = 0;
@@ -101,7 +105,7 @@ exports.addLoginHistory = async(userID, success, ip, deviceType, browser) => {
             attemptDate,
             succeded,
             IP,
-            timeOfLogin,
+            ${(success) ? "timeOfLogin," : ""}
             deviceTypeID,
             browserID   
         ) VALUES (
@@ -109,7 +113,7 @@ exports.addLoginHistory = async(userID, success, ip, deviceType, browser) => {
             "${attemptDate}",
             ${success},
             "${ip}",
-            "${loginDate}",
+            ${(success) ? `"${loginDate}",` : ""}
             ${dev},
             ${brow}
         );`

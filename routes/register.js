@@ -1,5 +1,5 @@
 var Router = require('koa-router');
-var registerModel = require('../models/registerDoa');
+var registerModel = require('../models/registerDao');
 var bodyParser = require('koa-bodyparser');
 
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
@@ -9,6 +9,22 @@ var router = Router({
 
 var bodyParser = require('koa-bodyparser');
 
+/**
+ * @name post/register
+ * @author A.M
+ * @inner
+ * @param {string} username
+ * @param {string} password
+ * @param {string} fName - first name
+ * @param {string} lName - last name
+ * @param {string} email - email
+ * @param {string} about - about user
+ * @param {INT} countryID - country of which user belongs
+ * @param {string} birthDate - DOB
+ * @param {file (image)} avatar - the user's avatar image
+ * @param {string} token TFA token from user
+ * @returns {Object} consisting of secret 
+ */
 router.post(`/register`, koaBody, async(ctx, next) => {
     try{
         const body = ctx.request.body
