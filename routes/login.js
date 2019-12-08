@@ -4,8 +4,7 @@ var bodyParser = require('koa-bodyparser');
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const device = require('../models/deviceDoa');
 const passport = require('koa-passport');
-require("../auth/auth");
-passport.initialize()
+var tfaModel = require('../models/twoFactorAuthDao')
 
 var router = Router({
     prefix: '/api/v1.0.0'
@@ -29,7 +28,7 @@ router.post(`/login`,koaBody, async(ctx, next) => {
         }
         //Login user
         let item = await loginModel.login(user, attempt)
-
+        
         ctx.body = item;
         ctx.response.status = 201;
     }catch(error){
@@ -38,6 +37,29 @@ router.post(`/login`,koaBody, async(ctx, next) => {
         ctx.body = {message:error.message};
     }
 });
+
+router.post(`/tfalogin`,koaBody, async(ctx, next) => {
+    return passport.authenticate("jwt", { session: false }, async (err, payload) => {//Get payload
+        try{
+            const body = ctx.request.body
+            const ID = body.userID
+            await tfaModel.twoFactorAuth(ID, ctx.request.headers['secret']).catch((e)=>{throw e})
+            const token = body.token
+            
+            const secret = await tfaModel.authenticateTwoFactorAuth(ID, token).catch((e)=> {throw {message: e.message, status: 401}})
+
+            ctx.body = {message:"authenticated", secret: secret};
+            ctx.response.status = 201;
+        }catch(error){
+            console.log(error)
+            ctx.response.status = error.status;
+            ctx.body = {message:error.message};
+        }
+    
+        
+    })(ctx)
+});
+
 
 
 
