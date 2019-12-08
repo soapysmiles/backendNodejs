@@ -4,9 +4,38 @@ var mysql = require('promise-mysql');
 var info = require('../config');
 var valid = require('../modules/validator')
 
-exports.authenticateTwoFactorAuth = async () => {
-
+exports.authenticateTwoFactorAuth = async (uID, token) => {
+    const tfa = await this.getTwoFactor(uID);
+    var secret = tfa.secret
+    if(tfa.active == 0) return false
+    var verified = speakeasy.totp.verify({
+        secret: secret,
+        encoding: 'base32',
+        token: token
+    });
+    if(!verified) throw new Error('Not authenticated')
+    return secret;
 }
+
+exports.twoFactorAuth = async (uID, secret) => {
+    try{
+        const twoFactor = await this.getTwoFactor(uID)
+            .catch((e) => {
+                if(e.message('Two factor not found')) return true
+            })
+            
+        if(twoFactor.active == 0) return true
+        if(twoFactor && twoFactor.secret == secret){
+            return true
+        }
+        throw new Error('Not authenticated')
+    }catch (error) {
+        if(error.status === undefined || isNaN(error.status))
+            error.status = 500;
+        throw error;
+    }
+}
+
 
 exports.activateTwoFactorAuth = async (uID) => {
     try{
