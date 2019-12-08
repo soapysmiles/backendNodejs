@@ -39,9 +39,9 @@ exports.twoFactorAuth = async (uID, secret) => {
     try{
         const twoFactor = await this.getTwoFactor(uID)
             .catch((e) => {
-                if(e.message('Two factor not found')) return true
+                if(e) return true
             })
-            
+        
         if(twoFactor.active == 0) return true
         if(twoFactor && twoFactor.secret == secret){
             return true
@@ -66,13 +66,15 @@ exports.activateTwoFactorAuth = async (uID) => {
         var secret = speakeasy.generateSecret({length: 20});
         const qr = await this.generateQR(secret);
 
-        await this.getTwoFactor(uID).catch(async(e) => {
-            if(e.message === 'Two factor not found'){//Check if two factor already exists
+
+        const tfa = await this.getTwoFactor(uID).catch(async(e) => {
+            if(e.message == 'Two factor not found'){//Check if two factor already exists
                 await this.addTwoFactor(uID, secret.base32, qr);
             }
-        }).then(async(res) => {
-            await this.updateTwoFactor(uID, secret.base32, qr);
         })
+        
+        if(tfa) await this.updateTwoFactor(uID, secret.base32, qr);
+        
 
        
         return {message:"created successfully", secret: secret.base32, qrcode: qr};

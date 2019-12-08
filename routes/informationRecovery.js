@@ -4,6 +4,7 @@ const passport = require('koa-passport');
 const informationRecoveryModel = require('../models/informationRecoveryDao')
 var Valid = require('../modules/validator')
 const userModel = require('../models/userDao')
+var tfaModel = require('../models/twoFactorAuthDao')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 var router = Router({
     prefix: '/api/v1.0.0/informationRecovery'
@@ -46,7 +47,8 @@ router.put(`/`, koaBody, async(ctx, next) => {
         try{
             const body = ctx.request.body;
             const ID = body.userID;
-            await tfaModel.twoFactorAuth(ID, ctx.request.headers['secret']).catch((e)=>{throw e})//Check if user authenticated tfa way
+            
+            //await tfaModel.twoFactorAuth(ID, ctx.request.headers['secret']).catch((e)=>{throw e})//Check if user authenticated tfa way
             if(payload.ID != ID) throw {message: 'Unauthorised', status: 401} //Checks if user is accessing own page
             const data = {
                 question1: body.question1,
