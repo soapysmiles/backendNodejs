@@ -6,6 +6,7 @@ const device = require('./deviceDoa');
 var pass = require('../modules/password')
 const Valid = require('../modules/validator')
 var user = require('./userDoa')
+var TFA = require('./twoFactorAuthDao')
 
 /**
  * @name login
@@ -51,8 +52,10 @@ exports.login = async(data, attempt) => {
 
         await connection.query(sql);
         
+        const tfaA = await TFA.getTwoFactor(result.ID).catch((e)=> {e})
+        const tfa = tfaA && tfaA.active
         connection.end()
-        return {message:"Logged in successfully", token: token, user: result};
+        return {message:"Logged in successfully", token: token, user: result, tfa: tfa};
     }catch (error) {
         if(error.status === undefined || isNaN(error.status))
             error.status = 500;

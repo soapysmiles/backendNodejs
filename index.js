@@ -2,6 +2,7 @@ var Koa = require('koa');
 var admin = require('./routes/admin');
 var login = require('./routes/login');
 var register = require('./routes/register');
+var tfa = require('./routes/twoFactorAuth');
 var passwordReset = require('./routes/passwordReset');
 var user = require('./routes/user');
 const { userAgent } = require('koa-useragent');
@@ -20,7 +21,8 @@ app.use(admin.routes());
 app.use(register.routes());
 app.use(user.routes());
 app.use(passwordReset.routes());
-app.use(passport.initialize())
+app.use(passport.initialize());
+app.use(tfa.routes());
 
 var port = process.env.PORT || 3000;
 app.use(mount("/", serve("./public")));
