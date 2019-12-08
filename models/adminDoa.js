@@ -44,6 +44,17 @@ exports.createTables = async(id) => {
                 FOREIGN KEY (countryID) REFERENCES countries(ID)
         );
         `,`
+        CREATE TABLE IF NOT EXISTS twoFactor (
+            ID INT NOT NULL AUTO_INCREMENT,
+            userID INT,
+            secret TEXT,
+            qrcode TEXT,
+            active BOOLEAN,
+            PRIMARY KEY(ID),
+            CONSTRAINT FK_twoFactorUser
+                FOREIGN KEY (userID) REFERENCES user(ID)
+        );
+        `,`
         CREATE TABLE IF NOT EXISTS deviceType(
             ID INT NOT NULL AUTO_INCREMENT,
             name TEXT,
