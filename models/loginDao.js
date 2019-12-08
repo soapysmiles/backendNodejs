@@ -10,6 +10,7 @@ var TFA = require('./twoFactorAuthDao')
 
 /**
  * @name login
+ * @author A.M
  * @param {object} data The data of the user's creditentials (username, password)
  * @param {object} attempt The data of the attempt (ip, deviceType)
  */
@@ -66,6 +67,7 @@ exports.login = async(data, attempt) => {
 
 /**
  * @name addLoginHistory
+ * @author A.M
  * @param {int} userID ID of attempted user login
  * @param {bool} success Logged in or not
  * @param {string} ip IP address of attempted login

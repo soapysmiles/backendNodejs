@@ -1,6 +1,12 @@
 var mysql = require('promise-mysql');
 var info = require('../config');
 
+/**
+ * @name getDeviceID - gets device by name
+ * @author A.M
+ * @param {string} name - name of device
+ * @returns {Object} of device data
+ */
 exports.getDeviceID = async(name) => {
     try{
         //Set DB connection
@@ -21,6 +27,12 @@ exports.getDeviceID = async(name) => {
     }
 }
 
+/**
+ * @name getDeviceID - gets device name by ID
+ * @author A.M
+ * @param {INT} ID - ID of device
+ * @returns {string} of device name
+ */
 exports.getDeviceName = async(ID) => {
     try{
         //Set DB connection
@@ -41,6 +53,12 @@ exports.getDeviceName = async(ID) => {
     }
 }
 
+/**
+ * @name getDeviceFromUserAgent - gets device name from user agent
+ * @author A.M
+ * @param {useragent Object} useragent
+ * @returns {string} device name
+ */
 exports.getDeviceFromUserAgent = async(useragent) => {
     try{
         const types = ['isMobile', 'isDesktop', 'isTablet'];
@@ -56,7 +74,12 @@ exports.getDeviceFromUserAgent = async(useragent) => {
         throw error;
     }
 }
-
+/**
+ * @name addDevice - adds device based on device name
+ * @author A.M
+ * @param {string} name
+ * @returns {INT} insert ID
+ */
 exports.addDevice = async(name) => {
     try{
         //Set DB connection
@@ -74,7 +97,12 @@ exports.addDevice = async(name) => {
         throw error;
     }
 }
-
+/**
+ * @name addBrowser - adds browser based on browser name
+ * @author A.M
+ * @param {string} name
+ * @returns {INT} insert ID
+ */
 exports.addBrowser = async(name) => {
     try{
         //Set DB connection
@@ -92,7 +120,12 @@ exports.addBrowser = async(name) => {
         throw error;
     }
 }
-
+/**
+ * @name getBrowserName - gets browser name by ID
+ * @author A.M
+ * @param {INT} ID - ID of browser
+ * @returns {string} of browser name
+ */
 exports.getBrowserName = async(ID) => {
     try{
         //Set DB connection
@@ -112,7 +145,12 @@ exports.getBrowserName = async(ID) => {
         throw error;
     }
 }
-
+/**
+ * @name getBrowserID - gets browser ID by name
+ * @author A.M
+ * @param {string} name - name of browser
+ * @returns {object} of browser data
+ */
 exports.getBrowserID = async(name) => {
     try{
         //Set DB connection

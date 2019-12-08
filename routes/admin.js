@@ -8,6 +8,10 @@ var router = Router({
 
 var bodyParser = require('koa-bodyparser');
 
+/**
+ * @name get/create_db
+ * @author A.M
+ */
 router.get('/create_db', async(ctx, next) => {
     let item = await adminModel.createTables();
     ctx.body = item;

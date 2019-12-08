@@ -5,6 +5,10 @@ exports.adminConsole = async() => {
     
 }
 
+/**
+ * @name createTables - creates database and tables
+ * @author A.M
+ */
 exports.createTables = async(id) => {
     try{
         const connectionNoDB = await mysql.createConnection({host: info.config.host, user: info.config.user, password: info.config.password})

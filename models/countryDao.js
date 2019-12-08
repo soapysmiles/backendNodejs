@@ -1,6 +1,13 @@
 var mysql = require('promise-mysql');
 var info = require('../config');
 
+/**
+ * @name getCountryByID - gets country values based on country ID
+ * @author A.M
+ * @inner
+ * @param {INT} ID - countryID
+ * @returns {Object} of country data
+ */
 exports.getCountryByID = async(ID) => {
     try{
         //Set DB connection
