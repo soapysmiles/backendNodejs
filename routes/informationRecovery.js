@@ -42,7 +42,7 @@ router.get(`/username/:email`, async(ctx, next) => {
  * @param {string} answer1
  * @param {string} answer2
  */
-router.put(`/`, koaBody, async(ctx, next) => { 
+router.put(`/`, koaBody, passport.authenticate("jwt", { session: false }), async(ctx, next) => { 
     return passport.authenticate("jwt", { session: false }, async (err, payload) => {//Get payload
         try{
             const body = ctx.request.body;
