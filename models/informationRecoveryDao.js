@@ -19,8 +19,7 @@ this.getQuestionsAnswers = async (uID) => {
         let sql = `SELECT * FROM passwordReminder
                 WHERE userID = "${uID}";`;
         const result = await connection.query(sql);
-        
-        if(result.length === 0) throw new Error('No questions found')
+        if(result.length == 0) throw new Error('No questions found')
         connection.end()
         return result[0]
     }catch(err){
@@ -198,16 +197,13 @@ exports.setQuestionsAnswers = async (uID, data) => {
         Valid.checkWord(data.question2, 'question2');
         Valid.checkWord(data.answer1, 'answer1');
         Valid.checkWord(data.answer2, 'answer2');
-        
-        await this.getQuestionsAnswers(uID)
-            .catch(async (e) => {
-            if(e.message = 'No questions found'){
-                await this.insertQuestions(uID, data)
-            }
-        }).then(async (qa) => {
+        let qa;
+        try{
+            qa = await this.getQuestionsAnswers(uID)
             await this.updateQuestions(qa.ID, data)
-        })
-
+        }catch(e){
+            await this.insertQuestions(uID, data)
+        }   
         
         return true
     }catch(err){
@@ -267,14 +263,18 @@ this.insertQuestions = async (uID, data) => {
             securityQuestion2,
             securityAnswer1,
             securityAnswer2,
-            userID
+            userID,
+            code,
+            codeSalt
         )
     VALUES(
         "${data.question1}",
         "${data.question2}",
         "${data.answer1}",
         "${data.answer2}",
-        ${uID}
+        ${uID},
+        "",
+        ""
         );`;
     await connection.query(sql);
     

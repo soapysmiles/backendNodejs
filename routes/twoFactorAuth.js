@@ -18,6 +18,7 @@ router.post(`/activate`, koaBody, async(ctx, next) => {
         try{
             const body = ctx.request.body
             const ID = body.userID;
+            console.log(payload)
             if(payload.ID != ID) throw {message: 'Unauthorised', status: 401} //Checks if user is accessing own page
             
             

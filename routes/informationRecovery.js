@@ -1,10 +1,34 @@
 var Router = require('koa-router');
 var bodyParser = require('koa-bodyparser');
 const passport = require('koa-passport');
-const passwordResetModel = require('../models/passwordResetDao')
+const informationRecoveryModel = require('../models/informationRecoveryDao')
+var Valid = require('../modules/validator')
+const userModel = require('../models/userDao')
+var tfaModel = require('../models/twoFactorAuthDao')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 var router = Router({
-    prefix: '/api/v1.0.0/passwordreset'
+    prefix: '/api/v1.0.0/informationRecovery'
+});
+
+/**
+ * @name get/Questions
+ * @author A.M
+ * @inner
+ * @param {string} email userID to get questions and answers
+ */
+router.get(`/username/:email`, async(ctx, next) => { 
+    try{
+        const email = ctx.params.email;
+        Valid.checkEmail(email, 'email')
+        //Gets user information
+        const user = await userModel.getOneByEmail(email)
+        //Sets return to user data
+        ctx.body = user.username;
+        ctx.response.status = 200;//a-o-kay
+    }catch(error){
+        ctx.response.status = error.status || 400;
+        ctx.body = {message:error.message};
+    }
 });
 
 
@@ -18,12 +42,13 @@ var router = Router({
  * @param {string} answer1
  * @param {string} answer2
  */
-router.put(`/`, koaBody, async(ctx, next) => { 
+router.put(`/`, koaBody, passport.authenticate("jwt", { session: false }), async(ctx, next) => { 
     return passport.authenticate("jwt", { session: false }, async (err, payload) => {//Get payload
         try{
             const body = ctx.request.body;
             const ID = body.userID;
-            await tfaModel.twoFactorAuth(ID, ctx.request.headers['secret']).catch((e)=>{throw e})//Check if user authenticated tfa way
+            
+            //await tfaModel.twoFactorAuth(ID, ctx.request.headers['secret']).catch((e)=>{throw e})//Check if user authenticated tfa way
             if(payload.ID != ID) throw {message: 'Unauthorised', status: 401} //Checks if user is accessing own page
             const data = {
                 question1: body.question1,
@@ -32,7 +57,7 @@ router.put(`/`, koaBody, async(ctx, next) => {
                 answer2: body.answer2
             }
             //Gets user questions
-            await passwordResetModel.setQuestionsAnswers(ID, data)
+            await informationRecoveryModel.setQuestionsAnswers(ID, data)
             //Sets return to user data
             ctx.body = {message: 'Questions and answers set'};
             ctx.response.status = 200;//a-o-kay
@@ -53,7 +78,7 @@ router.get(`/:ID([0-9]{1,})`, async(ctx, next) => {
     try{
         const ID = ctx.params.ID;
         //Gets user questions
-        const questions = await passwordResetModel.getQuestions(ID)
+        const questions = await informationRecoveryModel.getQuestions(ID)
         //Sets return to user data
         ctx.body = questions;
         ctx.response.status = 200;//a-o-kay
@@ -82,7 +107,7 @@ router.post(`/`, koaBody, async(ctx, next) => {
             answer2: body.answer2
         }
         //Check user answers
-        const result = await passwordResetModel.checkAnswers(ID, data)
+        const result = await informationRecoveryModel.checkAnswers(ID, data)
             .catch((e) => {throw e})
             .then((res) => {
                 return res
@@ -117,7 +142,7 @@ router.post(`/reset`, koaBody, async(ctx, next) => {
             newPassword: body.newPassword
         }
         //Change user password
-        await passwordResetModel.passwordReset(ID, data)
+        await informationRecoveryModel.passwordReset(ID, data)
             .catch((e) => {throw e})
         
         ctx.body = {message:"Password reset"};

@@ -15,7 +15,7 @@ var user = require('./userDao')
 exports.register = async(ctx, data, image) => {
     try{
         //Check if user exists
-        await user.isDuplicateUser(data.username).catch((err) => {
+        await user.isDuplicateUser(data.username, data.email).catch((err) => {
             throw {message: err.message, status:409};
         })
 

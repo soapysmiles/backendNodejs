@@ -4,20 +4,22 @@ var info = require('../config');
 const Valid = require('../modules/validator')
 
 /**
- * @name isDuplicateUser checks for another user with same username
+ * @name isDuplicateUser checks for another user with same username or email
  * @author A.M
  * @param {string} username - username
+ * @param {string} email - email
  * @return {boolean} false if no user
  * @throws if user already exists
  */
-exports.isDuplicateUser = async (username) => {
+exports.isDuplicateUser = async (username, email) => {
     try{
         Valid.checkWord(username, 'username')
         const connection = await mysql.createConnection(info.config);
 
         const sql = `
             SELECT count(ID) FROM user
-            WHERE username = "${username}";`
+            WHERE username = "${username}"
+            OR email = "${email}";`
         const result = await connection.query(sql)
             
         Object.keys(result).forEach(function(key) {
@@ -133,6 +135,45 @@ exports.getOne = async (username) => {
                 deleted
             FROM user
             WHERE username = "${username}";`;
+        const result = await connection.query(sql);
+        
+        if(result.length === 0) throw new Error('User does not exist')
+        connection.end()
+        return result[0]
+    }catch(err){
+        throw err
+    }
+}
+
+
+/**
+ * @name getOneByEmail
+ * @author A.M
+ * @param {string} email - email
+ * @throws if user does not exist
+ * @return {object} user data
+ */
+exports.getOneByEmail = async (email) => {
+    try{
+        Valid.checkEmail(email, 'email')
+        const connection = await mysql.createConnection(info.config);
+
+        let sql = `
+            SELECT 
+                ID,
+                username,
+                firstName,
+                lastName,
+                profileImageURL,
+                email,
+                about,
+                countryID,
+                birthDate,
+                dateRegistered,
+                active,
+                deleted
+            FROM user
+            WHERE email = "${email}";`;
         const result = await connection.query(sql);
         
         if(result.length === 0) throw new Error('User does not exist')
